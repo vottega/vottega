@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.ParticipantRole
+import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.domain.vo.Qualification
 import vottega.room_service.dto.participantInfoDTO
 import vottega.room_service.repository.RoomRepository
@@ -32,19 +33,19 @@ class RoomServiceImpl(
         return room;
     }
 
-    override fun renameRoom(roomId: Long, roomName: String): Room {
+    override fun updateRoom(roomId: Long, roomName : String?, status : RoomStatus?): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        return room.apply { updateRoomName(roomName) }
-    }
-
-    override fun startRoom(roomId: Long): Room {
-        val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        return room.apply{ start() }
-    }
-
-    override fun finishRoom(roomId: Long): Room {
-        val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        return room.apply{ finish() }
+        return room.apply {
+            roomName?.let { updateRoomName(it) }
+            status?.let {
+                when(it){
+                    RoomStatus.PROGRESS -> start()
+                    RoomStatus.FINISHED -> finish()
+                    RoomStatus.STOPPED -> stop()
+                    else -> throw IllegalArgumentException("Invalid status")
+                }
+            }
+        }
     }
 
     override fun addParticipant(roomId: Long, name: String, position: String, role: ParticipantRole, canVote: Boolean): Room {
@@ -79,5 +80,9 @@ class RoomServiceImpl(
     override fun exitParticipant(roomId: Long, participantId: UUID): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
         return room.apply { exitParticipant(participantId) }
+    }
+
+    override fun getRoom(roomId: Long): Room {
+        return roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
     }
 }
