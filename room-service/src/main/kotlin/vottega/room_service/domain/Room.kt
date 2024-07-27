@@ -25,7 +25,7 @@ class Room(
         private set
     var createdAt : LocalDateTime? = null
         private set
-    var lastModifiedAt : LocalDateTime? = null
+    var lastUpdatedAt : LocalDateTime? = null
         private set
     var startedAt : LocalDateTime? = null
         private set
@@ -34,7 +34,7 @@ class Room(
 
     fun updateRoomName(roomName: String){
         this.roomName = roomName
-        this.lastModifiedAt = LocalDateTime.now()
+        this.lastUpdatedAt = LocalDateTime.now()
     }
 
     fun addParticipant(name : String, qualification: Qualification){
@@ -79,7 +79,7 @@ class Room(
         }
         this.status = RoomStatus.PROGRESS
         this.startedAt = LocalDateTime.now()
-        this.lastModifiedAt = LocalDateTime.now()
+        this.lastUpdatedAt = LocalDateTime.now()
     }
 
     fun finish(){
@@ -88,7 +88,7 @@ class Room(
         }
         this.status = RoomStatus.FINISHED
         this.finishedAt = LocalDateTime.now()
-        this.lastModifiedAt = LocalDateTime.now()
+        this.lastUpdatedAt = LocalDateTime.now()
     }
 
     fun stop(){
@@ -96,17 +96,17 @@ class Room(
             throw IllegalStateException("Room is not in progress")
         }
         this.status = RoomStatus.STOPPED
-        this.lastModifiedAt = LocalDateTime.now()
+        this.lastUpdatedAt = LocalDateTime.now()
     }
 
     @PrePersist
     fun prePersist(){
         this.createdAt = LocalDateTime.now()
-        this.lastModifiedAt = LocalDateTime.now()
+        this.lastUpdatedAt = LocalDateTime.now()
     }
 
     @PreUpdate()
     fun preUpdate(){
-        this.lastModifiedAt = LocalDateTime.now()
+        this.lastUpdatedAt = LocalDateTime.now()
     }
 }
