@@ -1,12 +1,6 @@
 package vottega.room_service.domain
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
+import jakarta.persistence.*
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.domain.vo.Qualification
 import java.time.LocalDateTime
@@ -24,7 +18,7 @@ class Room(
         private set
     var owserId : Long = owserId
         private set
-    @OneToMany(mappedBy = "room", orphanRemoval = true)
+    @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
     var participantList: MutableList<Participant> = mutableListOf()
         private set
     var status : RoomStatus = RoomStatus.NOT_STARTED
