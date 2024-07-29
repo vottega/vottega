@@ -48,10 +48,13 @@ class RoomServiceImpl(
         }
     }
 
-    override fun addParticipant(roomId: Long, name: String, position: String, role: ParticipantRole, canVote: Boolean): Room {
+    override fun addParticipant(roomId: Long, participantInfoDTOs: List<participantInfoDTO>): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        val qualification = Qualification(position, role, canVote)
-        return room.apply { addParticipant(name, qualification) }
+        participantInfoDTOs.forEach {
+            val qualification = Qualification(it.position, it.role, it.canVote)
+            room.addParticipant(it.name, qualification)
+        }
+        return room
     }
 
     override fun removeParticipant(roomId: Long, participantId: UUID): Room {
