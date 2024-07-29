@@ -12,7 +12,7 @@ interface RoomService {
     fun updateRoom(roomId: Long, roomName: String? = null, status : RoomStatus? = null) : Room
     fun addParticipant(roomId: Long, participantInfoDTOs: List<participantInfoDTO>): Room
     fun removeParticipant(roomId: Long, participantId: UUID): Room
-    fun updateParticipant(roomId: Long, participantId: UUID, name: String, position: String, role: ParticipantRole, canVote: Boolean): Room
+    fun updateParticipant(roomId: Long, participantId: UUID, participantInfoDTO: participantInfoDTO): Room
     fun enterParticipant(roomId: Long, participantId: UUID): Room
     fun exitParticipant(roomId: Long, participantId: UUID): Room
 
