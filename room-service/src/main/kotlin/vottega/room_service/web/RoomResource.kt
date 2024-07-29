@@ -13,7 +13,6 @@ import java.util.*
 class RoomResource(
     private val roomService: RoomService,
     private val roomMapper: RoomMapper,
-    private val participantMapper: ParticipantMapper
 ) {
     @GetMapping("/{roomId}")
     fun getRoom(@PathVariable roomId: Long): RoomResponseDTO {
@@ -25,13 +24,4 @@ class RoomResource(
         return roomMapper.toRoomOutDTO(roomService.updateRoom(roomId, roomRequestDTO.roomName, roomRequestDTO.status))
     }
 
-    @PutMapping("/{roomId}/participants")
-    fun addParticipants(@PathVariable roomId: Long, @RequestBody participantInfoDTOs: List<participantInfoDTO>): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.addParticipant(roomId, participantInfoDTOs))
-    }
-
-    @DeleteMapping("/{roomId}/participants/{participantId}")
-    fun removeParticipant(@PathVariable roomId: Long, @PathVariable participantId: UUID): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.removeParticipant(roomId, participantId))
-    }
 }
