@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "Participant",
+  "namespace": "com.example.avro",
+  "fields": [
+    {"name": "id", "type": "string"},
+    {"name": "name", "type": "string"},
+    {"name": "qualification", "type": "string"},
+    {"name": "isEntered", "type": "boolean"}
+  ]
+}

@@ -2,14 +2,14 @@ package vottega.room_service.adaptor
 
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
+import vottega.room_service.domain.Participant
+import vottega.room_service.domain.Room
 
 
 @Service
-class KafkaProducer(private val kafkaTemplate: KafkaTemplate<String, String>) {
+interface RoomProducer {
 
-    fun roomEditMessageProduce(topic: String, message: String) {
-        kafkaTemplate.send(topic, message)
-    }
-
+    fun roomEditMessageProduce(room: Room)
+    fun participantEditMessageProduce(participant: Participant)
 
 }
