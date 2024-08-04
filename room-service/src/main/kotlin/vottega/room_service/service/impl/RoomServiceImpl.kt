@@ -15,7 +15,7 @@ import java.util.*
 @Transactional
 class RoomServiceImpl(
     private val roomRepository: RoomRepository,
-) : RoomService  {
+) : RoomService {
 
 
     @Transactional
@@ -33,12 +33,12 @@ class RoomServiceImpl(
         return room;
     }
 
-    override fun updateRoom(roomId: Long, roomName : String?, status : RoomStatus?): Room {
+    override fun updateRoom(roomId: Long, roomName: String?, status: RoomStatus?): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
         return room.apply {
             roomName?.let { updateRoomName(it) }
             status?.let {
-                when(it){
+                when (it) {
                     RoomStatus.PROGRESS -> start()
                     RoomStatus.FINISHED -> finish()
                     RoomStatus.STOPPED -> stop()
@@ -62,18 +62,13 @@ class RoomServiceImpl(
         return room.apply { removeParticipant(participantId) }
     }
 
-    override fun updateParticipant(
-        roomId: Long,
-        participantId: UUID,
-        name: String,
-        position: String,
-        role: ParticipantRole,
-        canVote: Boolean
-    ): Room {
+    override fun updateParticipant(roomId: Long, participantId: UUID, participantInfoDTO: participantInfoDTO): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        val qualification = Qualification(position, role, canVote)
-        return room.apply { updateParticipant(participantId, name, qualification) }
+        val qualification =
+            Qualification(participantInfoDTO.position, participantInfoDTO.role, participantInfoDTO.canVote)
+        return room.apply { updateParticipant(participantId, participantInfoDTO.name, qualification) }
     }
+
 
     override fun enterParticipant(roomId: Long, participantId: UUID): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
