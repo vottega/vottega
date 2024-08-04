@@ -10,7 +10,7 @@ class RoomMapper {
         return RoomResponseDTO(
             id = room.id ?: throw IllegalStateException("Room ID is null"),
             name = room.roomName,
-            participants = room.participantList.map { participant -> ParticipantMapper().toParticipantInfoDTO(participant) },
+            participants = room.participantList.map { participant -> ParticipantMapper().toParticipantResponseDTO(participant) },
             createdAt = room.createdAt ?: throw IllegalStateException("createdAt is null"),
             lastUpdatedAt = room.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null"),
             startedAt = room.startedAt,

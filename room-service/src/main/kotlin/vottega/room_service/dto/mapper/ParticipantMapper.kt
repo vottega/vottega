@@ -6,10 +6,11 @@ import vottega.room_service.dto.ParticipantResponseDTO
 
 @Component
 class ParticipantMapper {
-    fun toParticipantInfoDTO(participant : Participant) : ParticipantResponseDTO {
+    fun toParticipantResponseDTO(participant : Participant) : ParticipantResponseDTO {
         return ParticipantResponseDTO(
             id = participant.id ?: throw IllegalStateException("Participant ID is null"),
             name = participant.name,
+            roomId = participant.room.id ?: throw IllegalStateException("Room ID is null"),
             position = participant.qualification.position,
             role = participant.qualification.role,
             canVote = participant.qualification.canVote,

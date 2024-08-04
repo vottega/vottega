@@ -7,6 +7,7 @@ import java.util.*
 data class ParticipantResponseDTO(
     val id: UUID,
     val name: String,
+    val roomId: Long,
     val position: String,
     val role: ParticipantRole,
     val canVote: Boolean,
