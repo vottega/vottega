@@ -7,14 +7,8 @@ import org.springframework.stereotype.Service
 class RoomConsumer(
 ) {
     @KafkaListener(topics = ["room"])
-    fun enterEventConsume(message: String) {
-        //사람 입장 이벤트 처리
-
-    }
-
-    @KafkaListener(topics = ["room"])
-    fun exitEventConsume(message: String) {
-        //사람 퇴장 이벤트 처리
-
+    fun participantConnectEventConsume(message: String) {
+        //TODO 사람 입장 및 퇴장 이벤트 처리 (From Connection Service)
+        
     }
 }
