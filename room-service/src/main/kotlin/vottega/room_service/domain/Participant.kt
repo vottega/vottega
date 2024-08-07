@@ -16,12 +16,15 @@ import java.util.*
 @Entity
 data class Participant (
     var name : String,
-    @Embedded
-    var qualification : Qualification,
+    var position : String,
+    @ManyToOne
+    @JoinColumn(name = "qualification_id", nullable = false)
+    var participantRole: ParticipantRole,
     var isEntered : Boolean,
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     val room : Room,
+
     ){
 
     @Id
@@ -39,9 +42,10 @@ data class Participant (
         this.enteredAt = LocalDateTime.now()
     }
 
-    fun updateParticipant(name: String? = null, qualification: Qualification? = null) {
+    fun updateParticipant(name: String? = null, position: String? = null , participantRole: ParticipantRole? = null) {
         name?.let { this.name = it }
-        qualification?.let { this.qualification = it }
+        position?.let { this.position = it }
+        participantRole?.let { this.participantRole = it }
     }
 
     @PrePersist

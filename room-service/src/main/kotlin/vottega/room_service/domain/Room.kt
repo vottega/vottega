@@ -21,6 +21,10 @@ class Room(
     @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
     var participantList: MutableList<Participant> = mutableListOf()
         private set
+
+    @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
+    var participantRoleList: MutableList<ParticipantRole> = mutableListOf()
+        private set
     var status : RoomStatus = RoomStatus.NOT_STARTED
         private set
     var createdAt : LocalDateTime? = null
