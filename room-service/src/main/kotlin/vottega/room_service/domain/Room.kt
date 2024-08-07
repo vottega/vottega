@@ -2,7 +2,6 @@ package vottega.room_service.domain
 
 import jakarta.persistence.*
 import vottega.room_service.domain.enumeration.RoomStatus
-import vottega.room_service.domain.vo.Qualification
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -41,8 +40,8 @@ class Room(
         this.lastUpdatedAt = LocalDateTime.now()
     }
 
-    fun addParticipant(name : String, qualification: Qualification){
-        this.participantList.add(Participant(name, qualification, false, this))
+    fun addParticipant(name : String, position : String, participantRole: ParticipantRole){
+        this.participantList.add(Participant(name, position, participantRole, false, this))
     }
 
     fun removeParticipant(uuid: UUID){
@@ -53,12 +52,12 @@ class Room(
         this.participantList.remove(participant)
     }
 
-    fun updateParticipant(uuid: UUID, name: String? = null, qualification: Qualification? = null){
+    fun updateParticipant(uuid: UUID, name: String? = null, position : String? = null, participantRole: ParticipantRole? = null){
         val participant = this.participantList.find { it.id == uuid }
         if(participant == null){
             throw IllegalArgumentException("Participant not found")
         }
-        participant.updateParticipant(name, qualification)
+        participant.updateParticipant(name, position, participantRole)
     }
 
     fun enterParticipant(uuid: UUID){
