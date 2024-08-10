@@ -11,9 +11,9 @@ class ParticipantMapper {
             id = participant.id ?: throw IllegalStateException("Participant ID is null"),
             name = participant.name,
             roomId = participant.room.id ?: throw IllegalStateException("Room ID is null"),
-            position = participant.qualification.position,
-            role = participant.qualification.role,
-            canVote = participant.qualification.canVote,
+            position = participant.position,
+            role = participant.participantRole?.role,
+            canVote = participant.participantRole?.canVote,
             createdAt = participant.createdAt ?: throw IllegalStateException("createdAt is null"),
             enteredAt = participant.enteredAt,
             lastUpdatedAt = participant.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null")
