@@ -14,11 +14,12 @@ import java.util.*
 @Entity
 data class Participant(
     var name: String,
-    var position: String,
+    var phoneNumber: String? = null,
+    var position: String? = null,
     @ManyToOne
     @JoinColumn(name = "qualification_id", nullable = false)
-    var participantRole: ParticipantRole,
-    var isEntered: Boolean,
+    var participantRole: ParticipantRole? = null,
+    var isEntered: Boolean = false,
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     val room: Room,
@@ -41,8 +42,9 @@ data class Participant(
         this.enteredAt = LocalDateTime.now()
     }
 
-    fun updateParticipant(name: String? = null, position: String? = null, participantRole: ParticipantRole? = null) {
+    fun updateParticipant(name: String? = null, phoneNumber: String? ,position: String? = null, participantRole: ParticipantRole? = null) {
         name?.let { this.name = it }
+        phoneNumber?.let { this.phoneNumber = it }
         position?.let { this.position = it }
         participantRole?.let { this.participantRole = it }
     }

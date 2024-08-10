@@ -21,4 +21,9 @@ class RoomResource(
         return roomMapper.toRoomOutDTO(roomService.updateRoom(roomId, roomRequestDTO.roomName, roomRequestDTO.status))
     }
 
+    @PutMapping("/{roomId}/role")
+    fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: String): RoomResponseDTO {
+        return roomMapper.toRoomOutDTO(roomService.addRole(roomId, roleInfo))
+    }
+
 }

@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
-import vottega.room_service.domain.vo.Qualification
 import vottega.room_service.dto.ParticipantInfoDTO
+import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.repository.RoomRepository
 import vottega.room_service.service.RoomService
 import java.util.*
@@ -18,17 +18,12 @@ class RoomServiceImpl(
 
 
     @Transactional
-    override fun createRoom(
-        roomName: String,
-        ownerId: Long,
-        ParticipantInfoDTOS: List<ParticipantInfoDTO>
-    ): Room {
+    override fun createRoom(roomName: String, ownerId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): Room {
         val room = Room(roomName, ownerId)
-        ParticipantInfoDTOS.forEach {
-            var qualification = Qualification(it.position, it.role, it.canVote)
-            room.addParticipant(it.name, qualification)
-        }
         roomRepository.save(room)
+        participantInfoDTOS.forEach {
+            room.addParticipant(it)
+        }
         return room;
     }
 
@@ -47,11 +42,10 @@ class RoomServiceImpl(
         }
     }
 
-    override fun addParticipant(roomId: Long, ParticipantInfoDTOS: List<ParticipantInfoDTO>): Room {
+    override fun addParticipant(roomId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        ParticipantInfoDTOS.forEach {
-            val qualification = Qualification(it.position, it.role, it.canVote)
-            room.addParticipant(it.name, qualification)
+        participantInfoDTOS.forEach {
+            room.addParticipant(it)
         }
         return room
     }
@@ -63,9 +57,7 @@ class RoomServiceImpl(
 
     override fun updateParticipant(roomId: Long, participantId: UUID, participantInfoDTO: ParticipantInfoDTO): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
-        val qualification =
-            Qualification(participantInfoDTO.position, participantInfoDTO.role, participantInfoDTO.canVote)
-        return room.apply { updateParticipant(participantId, participantInfoDTO.name, qualification) }
+        return room.apply { updateParticipant(participantId, participantInfoDTO) }
     }
 
 
@@ -77,6 +69,11 @@ class RoomServiceImpl(
     override fun exitParticipant(roomId: Long, participantId: UUID): Room {
         val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
         return room.apply { exitParticipant(participantId) }
+    }
+
+    override fun addRole(roomId: Long, roleInfo: ParticipantRoleDTO): Room {
+        val room = roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
+        return room.apply { addParticipantRole(roleInfo.role, roleInfo.canVote) }
     }
 
     override fun getRoom(roomId: Long): Room {
