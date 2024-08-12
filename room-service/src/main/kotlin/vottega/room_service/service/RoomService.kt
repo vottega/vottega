@@ -20,4 +20,6 @@ interface RoomService {
 
     fun getRoom(roomId: Long): Room
 
+    fun getRoomList(userId : Long): List<Room>
+
 }

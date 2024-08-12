@@ -79,4 +79,9 @@ class RoomServiceImpl(
     override fun getRoom(roomId: Long): Room {
         return roomRepository.findById(roomId).orElseThrow { IllegalArgumentException("Room not found") }
     }
+
+    override fun getRoomList(userId: Long): List<Room> {
+        return roomRepository.findByUserId(userId)
+
+    }
 }

@@ -1,6 +1,7 @@
 package vottega.room_service.web
 
 import org.springframework.web.bind.annotation.*
+import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.dto.UpdateRoomRequestDTO
 import vottega.room_service.dto.RoomResponseDTO
 import vottega.room_service.dto.mapper.RoomMapper
@@ -22,8 +23,13 @@ class RoomResource(
     }
 
     @PutMapping("/{roomId}/role")
-    fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: String): RoomResponseDTO {
+    fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: ParticipantRoleDTO): RoomResponseDTO {
         return roomMapper.toRoomOutDTO(roomService.addRole(roomId, roleInfo))
+    }
+
+    @GetMapping("/list/{userId}")
+    fun getRoomList(@PathVariable userId: Long): List<RoomResponseDTO> {
+        return roomService.getRoomList(userId).map { roomMapper.toRoomOutDTO(it) }
     }
 
 }
