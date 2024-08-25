@@ -6,6 +6,7 @@ import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.exception.ParticipantNotFoundException
 import vottega.room_service.exception.RoleNotFoundException
+import vottega.room_service.exception.RoleStatusConflictException
 import vottega.room_service.exception.RoomStatusConflictException
 import java.time.LocalDateTime
 import java.util.UUID
@@ -52,7 +53,7 @@ class Room(
 
     fun addParticipantRole(role: String, canVote: Boolean?){
         if(this.participantRoleList.find { it.role == role } != null){
-            throw IllegalArgumentException("Role already exists")
+            throw RoleStatusConflictException(role)
         }
         this.participantRoleList.add(ParticipantRole(this, role, canVote))
     }

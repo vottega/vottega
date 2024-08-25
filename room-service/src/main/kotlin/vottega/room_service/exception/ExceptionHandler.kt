@@ -11,7 +11,7 @@ class ExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleResourceNotFoundException(e: RoomNotFoundException) = e.message
 
-    @ExceptionHandler(RoomStatusConflictException::class)
+    @ExceptionHandler(RoomStatusConflictException::class, RoleStatusConflictException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleRoomStatusConflictException(e: RoomStatusConflictException) = e.message
 }
