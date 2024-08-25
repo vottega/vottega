@@ -19,6 +19,8 @@ interface RoomService {
 
     fun addRole(roomId: Long, roleInfo: ParticipantRoleDTO): RoomResponseDTO
 
+    fun deleteRole(roomId : Long, role: String): RoomResponseDTO
+
     fun getRoom(roomId: Long): RoomResponseDTO
 
     fun getRoomList(userId : Long): List<RoomResponseDTO>

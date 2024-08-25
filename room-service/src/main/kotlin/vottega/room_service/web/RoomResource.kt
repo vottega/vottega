@@ -23,8 +23,13 @@ class RoomResource(
     fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: ParticipantRoleDTO): RoomResponseDTO =
         roomService.addRole(roomId, roleInfo)
 
+    @DeleteMapping("/{roomId}/role/{role}")
+    fun deleteRole(@PathVariable roomId: Long, @PathVariable role: String): RoomResponseDTO =
+        roomService.deleteRole(roomId, role)
+
     @GetMapping("/list/{userId}")
     fun getRoomList(@PathVariable userId: Long): List<RoomResponseDTO> = roomService.getRoomList(userId)
+
 
 
 }

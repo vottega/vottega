@@ -13,17 +13,21 @@ class ParticipantResource(
     private val roomMapper: RoomMapper
 ) {
     @PutMapping("/{roomId}/participants")
-    fun addParticipants(@PathVariable roomId: Long, @RequestBody ParticipantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.addParticipant(roomId, ParticipantInfoDTOS))
-    }
+    fun addParticipants(
+        @PathVariable roomId: Long,
+        @RequestBody ParticipantInfoDTOList: List<ParticipantInfoDTO>
+    ): RoomResponseDTO = roomService.addParticipant(roomId, ParticipantInfoDTOList)
 
     @DeleteMapping("/{roomId}/participants/{participantId}")
-    fun removeParticipant(@PathVariable roomId: Long, @PathVariable participantId: UUID): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.removeParticipant(roomId, participantId))
-    }
+    fun removeParticipant(@PathVariable roomId: Long, @PathVariable participantId: UUID): RoomResponseDTO =
+        roomService.removeParticipant(roomId, participantId)
+
 
     @PatchMapping("/api/room/{roomId}/participants/{participantId}")
-    fun updateParticipant(@PathVariable roomId: Long, @PathVariable participantId: UUID, @RequestBody participantInfoDTO: ParticipantInfoDTO): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.updateParticipant(roomId, participantId, participantInfoDTO))
-    }
+    fun updateParticipant(
+        @PathVariable roomId: Long,
+        @PathVariable participantId: UUID,
+        @RequestBody participantInfoDTO: ParticipantInfoDTO
+    ): RoomResponseDTO = roomService.updateParticipant(roomId, participantId, participantInfoDTO)
+
 }
