@@ -9,27 +9,22 @@ import vottega.room_service.service.RoomService
 
 @RestController("/api/room")
 class RoomResource(
-    private val roomService: RoomService,
-    private val roomMapper: RoomMapper,
+    private val roomService: RoomService
 ) {
     @GetMapping("/{roomId}")
-    fun getRoom(@PathVariable roomId: Long): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.getRoom(roomId))
-    }
+    fun getRoom(@PathVariable roomId: Long): RoomResponseDTO =
+        roomService.getRoom(roomId)
 
     @PatchMapping("/{roomId}")
-    fun updateRoom(@PathVariable roomId: Long, @RequestBody roomRequestDTO: UpdateRoomRequestDTO): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.updateRoom(roomId, roomRequestDTO.roomName, roomRequestDTO.status))
-    }
+    fun updateRoom(@PathVariable roomId: Long, @RequestBody roomRequestDTO: UpdateRoomRequestDTO): RoomResponseDTO =
+        roomService.updateRoom(roomId, roomRequestDTO.roomName, roomRequestDTO.status)
 
     @PutMapping("/{roomId}/role")
-    fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: ParticipantRoleDTO): RoomResponseDTO {
-        return roomMapper.toRoomOutDTO(roomService.addRole(roomId, roleInfo))
-    }
+    fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: ParticipantRoleDTO): RoomResponseDTO =
+        roomService.addRole(roomId, roleInfo)
 
     @GetMapping("/list/{userId}")
-    fun getRoomList(@PathVariable userId: Long): List<RoomResponseDTO> {
-        return roomService.getRoomList(userId).map { roomMapper.toRoomOutDTO(it) }
-    }
+    fun getRoomList(@PathVariable userId: Long): List<RoomResponseDTO> = roomService.getRoomList(userId)
+
 
 }
