@@ -10,6 +10,7 @@ data class ParticipantResponseDTO(
     val position: String?,
     val role: String?,
     val canVote: Boolean?,
+    val isEntered: Boolean,
     val createdAt: LocalDateTime,
     val enteredAt: LocalDateTime?,
     val lastUpdatedAt: LocalDateTime,

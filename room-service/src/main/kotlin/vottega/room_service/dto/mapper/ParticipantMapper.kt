@@ -14,6 +14,7 @@ class ParticipantMapper {
             position = participant.position,
             role = participant.participantRole?.role,
             canVote = participant.participantRole?.canVote,
+            isEntered = participant.isEntered,
             createdAt = participant.createdAt ?: throw IllegalStateException("createdAt is null"),
             enteredAt = participant.enteredAt,
             lastUpdatedAt = participant.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null")
