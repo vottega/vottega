@@ -4,6 +4,9 @@ import jakarta.persistence.*
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.dto.ParticipantRoleDTO
+import vottega.room_service.exception.ParticipantNotFoundException
+import vottega.room_service.exception.RoleNotFoundException
+import vottega.room_service.exception.RoomStatusConflictException
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -43,7 +46,7 @@ class Room(
 
     fun addParticipant(participantInfoDTO: ParticipantInfoDTO){
         val participantRole = participantRoleList.find { it.role == participantInfoDTO.role }
-            ?: throw IllegalArgumentException("Role not found")
+            ?: throw RoleNotFoundException(participantInfoDTO.role)
         this.participantList.add(Participant(participantInfoDTO.name, participantInfoDTO.phoneNumber, participantInfoDTO.position, participantRole, false, this))
     }
 
@@ -54,10 +57,18 @@ class Room(
         this.participantRoleList.add(ParticipantRole(this, role, canVote))
     }
 
+    fun deleteParticipantRole(role: String){
+        val participantRole = this.participantRoleList.find { it.role == role }
+        if(participantRole == null){
+            throw RoleNotFoundException(role)
+        }
+        this.participantRoleList.remove(participantRole)
+    }
+
     fun updateParticipantRole(role: String, canVote: Boolean){
         val participantRole = this.participantRoleList.find { it.role == role }
         if(participantRole == null){
-            throw IllegalArgumentException("Role not found")
+            throw RoleNotFoundException(role)
         }
         participantRole.updateCanVote(canVote)
     }
@@ -65,8 +76,8 @@ class Room(
 
     fun removeParticipant(uuid: UUID){
         val participant = this.participantList.find { it.id == uuid }
-        if(participant == null){
-            throw IllegalArgumentException("Participant not found")
+        if(participant == null) {
+            throw ParticipantNotFoundException(uuid)
         }
         this.participantList.remove(participant)
     }
@@ -74,10 +85,10 @@ class Room(
     fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO){
         val participant = this.participantList.find { it.id == uuid }
         if(participant == null){
-            throw IllegalArgumentException("Participant not found")
+            throw ParticipantNotFoundException(uuid)
         }
         val participantRole = (this.participantRoleList.find { it.role == participantInfoDTO.role }
-            ?: throw IllegalArgumentException("Role not found"))
+            ?: throw RoleNotFoundException(participantInfoDTO.role))
 
         participant.updateParticipant(participantInfoDTO.name, participantInfoDTO.phoneNumber, participantInfoDTO.position, participantRole)
     }
@@ -85,7 +96,7 @@ class Room(
     fun enterParticipant(uuid: UUID){
         val participant = this.participantList.find { it.id == uuid }
         if(participant == null){
-            throw IllegalArgumentException("Participant not found")
+            throw ParticipantNotFoundException(uuid)
         }
         participant.enter()
     }
@@ -93,14 +104,14 @@ class Room(
     fun exitParticipant(uuid: UUID){
         val participant = this.participantList.find { it.id == uuid }
         if(participant == null){
-            throw IllegalArgumentException("Participant not found")
+            throw ParticipantNotFoundException(uuid)
         }
         participant.exit()
     }
 
     fun start(){
         if(this.status != RoomStatus.NOT_STARTED || this.status != RoomStatus.STOPPED){
-            throw IllegalStateException("Room is already started")
+            throw RoomStatusConflictException(this.status)
         }
         this.status = RoomStatus.PROGRESS
         this.startedAt = LocalDateTime.now()
@@ -109,7 +120,7 @@ class Room(
 
     fun finish(){
         if (this.status != RoomStatus.PROGRESS){
-            throw IllegalStateException("Room is not in progress")
+            throw RoomStatusConflictException(this.status)
         }
         this.status = RoomStatus.FINISHED
         this.finishedAt = LocalDateTime.now()
@@ -118,7 +129,7 @@ class Room(
 
     fun stop(){
         if (this.status == RoomStatus.STOPPED){
-            throw IllegalStateException("Room is not in progress")
+            throw RoomStatusConflictException(this.status)
         }
         this.status = RoomStatus.STOPPED
         this.lastUpdatedAt = LocalDateTime.now()
