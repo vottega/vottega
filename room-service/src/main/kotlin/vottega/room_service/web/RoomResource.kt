@@ -7,7 +7,8 @@ import vottega.room_service.dto.RoomResponseDTO
 import vottega.room_service.dto.mapper.RoomMapper
 import vottega.room_service.service.RoomService
 
-@RestController("/api/room")
+@RestController
+@RequestMapping("/api/room")
 class RoomResource(
     private val roomService: RoomService
 ) {

@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 class SecurityConfig {
-    @Bean
-    fun roomOwnerSecurity(){
-        //TODO: Implement security for room owner 
-    }
+//    @Bean
+//    fun roomOwnerSecurity(){
+//        //TODO: Implement security for room owner
+//    }
 }

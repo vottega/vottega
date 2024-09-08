@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://room-db:3307/room-db
+    username: minguni
+    password: minguni
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

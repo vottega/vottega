@@ -1,0 +1,27 @@
+  version: '3'
+  services:
+    room-service:
+      build: .
+      ports:
+        - "8081:8080"
+      depends_on:
+        - room-db
+        - kafka
+      networks:
+        - vottega-network
+
+    room-db:
+      image: mariadb:latest
+      environment:
+        MYSQL_ROOT_PASSWORD: minguni
+        MYSQL_DATABASE: room-db
+        MARIADB_USER: minguni
+        MARIADB_PASSWORD: minguni
+      ports:
+        - "3307:3306"
+      networks:
+        - vottega-network
+
+  networks:
+    vottega-network:
+      external: true

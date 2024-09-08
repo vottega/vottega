@@ -7,7 +7,8 @@ import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.service.RoomService
 import java.util.*
 
-@RestController("/api/room")
+@RestController
+@RequestMapping("/api/room")
 class ParticipantResource(
     private val roomService: RoomService,
     private val roomMapper: RoomMapper
@@ -23,7 +24,7 @@ class ParticipantResource(
         roomService.removeParticipant(roomId, participantId)
 
 
-    @PatchMapping("/api/room/{roomId}/participants/{participantId}")
+    @PatchMapping("/{roomId}/participants/{participantId}")
     fun updateParticipant(
         @PathVariable roomId: Long,
         @PathVariable participantId: UUID,
