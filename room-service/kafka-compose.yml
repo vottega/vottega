@@ -1,10 +1,11 @@
-version: '3'
 services:
   zookeeper:
     image: wurstmeister/zookeeper:latest
     container_name: zookeeper
     ports:
       - "2181:2181"
+    networks:
+        - vottega-network
   kafka:
     image: wurstmeister/kafka:latest
     container_name: kafka
@@ -15,3 +16,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - C:/docker/kafka_data:/var/lib/kafka/data
+    networks:
+        - vottega-network
+networks:
+  vottega-network:
+    external: true
