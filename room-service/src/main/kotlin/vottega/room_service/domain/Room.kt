@@ -13,16 +13,17 @@ import java.util.UUID
 
 @Entity
 class Room(
-    roomName : String,
-    owserId : Long,
+    roomName: String,
+    owserId: Long,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id : Long? = null
-    var roomName : String = roomName
+    var id: Long? = null
+    var roomName: String = roomName
         private set
-    var ownerId : Long = owserId
+    var ownerId: Long = owserId
         private set
+
     @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
     var participantList: MutableList<Participant> = mutableListOf()
         private set
@@ -30,88 +31,110 @@ class Room(
     @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
     var participantRoleList: MutableList<ParticipantRole> = mutableListOf()
         private set
-    var status : RoomStatus = RoomStatus.NOT_STARTED
+    var status: RoomStatus = RoomStatus.NOT_STARTED
         private set
-    var createdAt : LocalDateTime? = null
+    var createdAt: LocalDateTime? = null
         private set
-    var lastUpdatedAt : LocalDateTime? = null
+    var lastUpdatedAt: LocalDateTime? = null
         private set
-    var startedAt : LocalDateTime? = null
+    var startedAt: LocalDateTime? = null
         private set
-    var finishedAt : LocalDateTime? = null
+    var finishedAt: LocalDateTime? = null
         private set
 
-    fun updateRoomName(roomName: String){
-        this.roomName = roomName
-    }
-
-    fun addParticipant(participantInfoDTO: ParticipantInfoDTO){
+    fun addParticipant(participantInfoDTO: ParticipantInfoDTO) {
         val participantRole = participantRoleList.find { it.role == participantInfoDTO.role }
             ?: throw RoleNotFoundException(participantInfoDTO.role)
-        this.participantList.add(Participant(participantInfoDTO.name, participantInfoDTO.phoneNumber, participantInfoDTO.position, participantRole, false, this))
+        this.participantList.add(
+            Participant(
+                participantInfoDTO.name,
+                participantInfoDTO.phoneNumber,
+                participantInfoDTO.position,
+                participantRole,
+                false,
+                this
+            )
+        )
     }
 
-    fun addParticipantRole(role: String, canVote: Boolean?){
-        if(this.participantRoleList.find { it.role == role } != null){
+    fun addParticipantRole(role: String, canVote: Boolean?) {
+        if (this.participantRoleList.find { it.role == role } != null) {
             throw RoleStatusConflictException(role)
         }
         this.participantRoleList.add(ParticipantRole(this, role, canVote))
     }
 
-    fun deleteParticipantRole(role: String){
+    fun deleteParticipantRole(role: String) {
         val participantRole = this.participantRoleList.find { it.role == role }
-        if(participantRole == null){
+        if (participantRole == null) {
             throw RoleNotFoundException(role)
         }
         this.participantRoleList.remove(participantRole)
     }
 
-    fun updateParticipantRole(role: String, canVote: Boolean){
+    fun updateParticipantRole(role: String, canVote: Boolean) {
         val participantRole = this.participantRoleList.find { it.role == role }
-        if(participantRole == null){
+        if (participantRole == null) {
             throw RoleNotFoundException(role)
         }
         participantRole.updateCanVote(canVote)
     }
 
 
-    fun removeParticipant(uuid: UUID){
+    fun removeParticipant(uuid: UUID) {
         val participant = this.participantList.find { it.id == uuid }
-        if(participant == null) {
+        if (participant == null) {
             throw ParticipantNotFoundException(uuid)
         }
         participant.remove()
     }
 
-    fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO){
+    fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO) {
         val participant = this.participantList.find { it.id == uuid }
-        if(participant == null){
+        if (participant == null) {
             throw ParticipantNotFoundException(uuid)
         }
         val participantRole = (this.participantRoleList.find { it.role == participantInfoDTO.role }
             ?: throw RoleNotFoundException(participantInfoDTO.role))
 
-        participant.updateParticipant(participantInfoDTO.name, participantInfoDTO.phoneNumber, participantInfoDTO.position, participantRole)
+        participant.updateParticipant(
+            participantInfoDTO.name,
+            participantInfoDTO.phoneNumber,
+            participantInfoDTO.position,
+            participantRole
+        )
     }
 
-    fun enterParticipant(uuid: UUID){
+    fun enterParticipant(uuid: UUID) {
         val participant = this.participantList.find { it.id == uuid }
-        if(participant == null){
+        if (participant == null) {
             throw ParticipantNotFoundException(uuid)
         }
         participant.enter()
     }
 
-    fun exitParticipant(uuid: UUID){
+    fun exitParticipant(uuid: UUID) {
         val participant = this.participantList.find { it.id == uuid }
-        if(participant == null){
+        if (participant == null) {
             throw ParticipantNotFoundException(uuid)
         }
         participant.exit()
     }
 
-    fun start(){
-        if(this.status != RoomStatus.NOT_STARTED || this.status != RoomStatus.STOPPED){
+    fun update(roomName: String? = null, status: RoomStatus? = null) {
+        roomName?.let { this.roomName = it }
+        status?.let {
+            when (it) {
+                RoomStatus.PROGRESS -> start()
+                RoomStatus.FINISHED -> finish()
+                RoomStatus.STOPPED -> stop()
+                else -> throw RoomStatusConflictException(it)
+            }
+        }
+    }
+
+    private fun start() {
+        if (this.status != RoomStatus.NOT_STARTED || this.status != RoomStatus.STOPPED) {
             throw RoomStatusConflictException(this.status)
         }
         this.status = RoomStatus.PROGRESS
@@ -119,8 +142,8 @@ class Room(
         this.lastUpdatedAt = LocalDateTime.now()
     }
 
-    fun finish(){
-        if (this.status != RoomStatus.PROGRESS){
+    private fun finish() {
+        if (this.status != RoomStatus.PROGRESS) {
             throw RoomStatusConflictException(this.status)
         }
         this.status = RoomStatus.FINISHED
@@ -128,8 +151,8 @@ class Room(
         this.lastUpdatedAt = LocalDateTime.now()
     }
 
-    fun stop(){
-        if (this.status == RoomStatus.STOPPED){
+    private fun stop() {
+        if (this.status == RoomStatus.STOPPED) {
             throw RoomStatusConflictException(this.status)
         }
         this.status = RoomStatus.STOPPED
@@ -137,13 +160,13 @@ class Room(
     }
 
     @PrePersist
-    fun prePersist(){
+    fun prePersist() {
         this.createdAt = LocalDateTime.now()
         this.lastUpdatedAt = LocalDateTime.now()
     }
 
     @PreUpdate()
-    fun preUpdate(){
+    fun preUpdate() {
         this.lastUpdatedAt = LocalDateTime.now()
     }
 }

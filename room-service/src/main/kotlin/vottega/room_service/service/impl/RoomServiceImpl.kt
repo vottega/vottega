@@ -36,17 +36,7 @@ class RoomServiceImpl(
 
     override fun updateRoom(roomId: Long, roomName: String?, status: RoomStatus?): RoomResponseDTO {
         val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
-        room.apply {
-            roomName?.let { updateRoomName(it) }
-            status?.let {
-                when (it) {
-                    RoomStatus.PROGRESS -> start()
-                    RoomStatus.FINISHED -> finish()
-                    RoomStatus.STOPPED -> stop()
-                    else -> throw RoomStatusConflictException(it)
-                }
-            }
-        }
+        room.update(roomName, status)
         return roomMapper.toRoomOutDTO(room)
     }
 
