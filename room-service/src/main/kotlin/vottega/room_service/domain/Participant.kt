@@ -32,6 +32,7 @@ data class Participant(
     var enteredAt: LocalDateTime? = null
     var createdAt: LocalDateTime? = null
     var lastUpdatedAt: LocalDateTime? = null
+    var deletedAt: LocalDateTime? = null
     fun enter() {
         this.isEntered = true
         this.enteredAt = LocalDateTime.now()
@@ -40,6 +41,10 @@ data class Participant(
     fun exit() {
         this.isEntered = false
         this.enteredAt = LocalDateTime.now()
+    }
+
+    fun remove() {
+        this.deletedAt = LocalDateTime.now()
     }
 
     fun updateParticipant(name: String? = null, phoneNumber: String? ,position: String? = null, participantRole: ParticipantRole? = null) {

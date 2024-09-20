@@ -80,7 +80,7 @@ class Room(
         if(participant == null) {
             throw ParticipantNotFoundException(uuid)
         }
-        this.participantList.remove(participant)
+        participant.remove()
     }
 
     fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO){
