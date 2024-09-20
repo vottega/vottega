@@ -8,10 +8,12 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
+import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import java.util.*
 
 @Entity
+@Where(clause = "deleted_at IS NULL")
 data class Participant(
     var name: String,
     var phoneNumber: String? = null,
