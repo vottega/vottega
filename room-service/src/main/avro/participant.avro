@@ -1,11 +1,66 @@
 {
   "type": "record",
   "name": "Participant",
-  "namespace": "com.example.avro",
+  "namespace": "vottega.room_service.avro",
   "fields": [
-    {"name": "id", "type": "string"},
-    {"name": "name", "type": "string"},
-    {"name": "qualification", "type": "string"},
-    {"name": "isEntered", "type": "boolean"}
+    {
+      "name": "id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "roomId",
+      "type": "long"
+    },
+    {
+      "name": "position",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "role",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "canVote",
+      "type": ["null", "boolean"],
+      "default": null
+    },
+    {
+      "name": "isEntered",
+      "type": "boolean"
+    },
+    {
+      "name": "createdAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "enteredAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "lastUpdatedAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
   ]
 }
