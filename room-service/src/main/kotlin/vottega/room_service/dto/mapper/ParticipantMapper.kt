@@ -20,4 +20,19 @@ class ParticipantMapper {
             lastUpdatedAt = participant.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null")
         )
     }
+
+    fun toAvro(participantResponseDTO: ParticipantResponseDTO): AvroParticipantResponseDTO {
+        return AvroParticipantResponseDTO.newBuilder()
+            .setId(participantResponseDTO.id)
+            .setName(participantResponseDTO.name)
+            .setRoomId(participantResponseDTO.roomId)
+            .setPosition(participantResponseDTO.position)
+            .setRole(participantResponseDTO.role)
+            .setCanVote(participantResponseDTO.canVote)
+            .setIsEntered(participantResponseDTO.isEntered)
+            .setCreatedAt(participantResponseDTO.createdAt.toInstant(ZoneOffset.UTC).toEpochMilli())
+            .setEnteredAt(participantResponseDTO.enteredAt?.toInstant(ZoneOffset.UTC)?.toEpochMilli())
+            .setLastUpdatedAt(participantResponseDTO.lastUpdatedAt.toInstant(ZoneOffset.UTC).toEpochMilli())
+            .build()
+    }
 }
