@@ -2,29 +2,28 @@ package vottega.sse_server.web
 
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
+import vottega.sse_server.adapt.KafkaConsumer
+import vottega.sse_server.service.SseService
 import java.time.LocalTime
+import java.util.UUID
 import kotlin.time.Duration
 
 
 @RestController
-class SseController(private val kafkaConsumer: KafkaConsumer) {
+class SseController(private val sseService: SseService) {
 
-    @GetMapping("/sse/kafka", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun streamKafkaMessages(): Flux<String> {
-        // 여러 Kafka Consumer를 하나의 Flux로 병합
-        return Flux.merge(
-            kafkaConsumer.consumeRoomMessages(),
-            kafkaConsumer.consumeVoteMessages(),
-            kafkaConsumer.consumeShorthandMessages()
-        )
-            .map { message ->
-                "data: $message\n\n" // SSE 포맷에 맞게 메시지 변환
+    @GetMapping("/sse/room/{roomId}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun streamKafkaMessages(@PathVariable roomId: Long, userId: UUID): Flux<String> { // TODO Argument Resolver로 변경
+
+        return Flux.create<String> { sink ->
+            sseService.enterRoom(roomId, userId, sink)
+            sink.onCancel {
+                sseService.exitRoom(roomId, userId, sink)
             }
-            .doOnCancel {
-                // 클라이언트가 연결을 끊었을 때 처리할 로직
-                println("Client disconnected from SSE")
-            }
+        }
     }
 }
