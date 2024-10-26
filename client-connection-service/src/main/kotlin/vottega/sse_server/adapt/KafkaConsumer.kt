@@ -17,4 +17,8 @@ class KafkaConsumer(val sseService: SseService) {
     fun roomInfoConsume() {
         return sseService.broadcastToRoom(1, "roomInfoConsume")
     }
+
+    private fun pasreMessage(){
+        //TODO
+    }
 }
