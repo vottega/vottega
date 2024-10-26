@@ -2,18 +2,19 @@ package vottega.sse_server.adapt
 
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
+import vottega.sse_server.service.SseService
 
 @Component
-class KafkaConsumer {
-    fun shortHandConsume(): Flux<String> {
-        return Flux.just("Hello", "World")
+class KafkaConsumer(val sseService: SseService) {
+    fun shortHandConsume() {
+        return sseService.broadcastToRoom(1, "shortHandConsume")
     }
 
-    fun voteInfoConsume(): Flux<String> {
-        return Flux.just("Vote", "Info")
+    fun voteInfoConsume() {
+        return sseService.broadcastToRoom(1, "voteInfoConsume")
     }
 
-    fun roomInfoConsume(): Flux<String> {
-        return Flux.just("Room", "Info")
+    fun roomInfoConsume() {
+        return sseService.broadcastToRoom(1, "roomInfoConsume")
     }
 }
