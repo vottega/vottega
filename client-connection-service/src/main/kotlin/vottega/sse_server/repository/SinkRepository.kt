@@ -14,10 +14,10 @@ class SinkRepository {
         sinkMap.remove(roomId); // TODO 아직 연결되어 있는 사람이 있으면 REMOVE 안하기
     }
 
-    fun getRoomSink(roomId: Long): Flux<RoomEvent> {
+    fun getRoomSink(roomId: Long): Sinks.Many<RoomEvent> {
         return sinkMap.computeIfAbsent(roomId) {
             Sinks.many().replay().latest()
-        }.asFlux()
+        }
     }
 
 }
