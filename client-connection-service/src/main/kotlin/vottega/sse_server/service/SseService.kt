@@ -1,14 +1,10 @@
 package vottega.sse_server.service
 
-import reactor.core.publisher.FluxSink
-import reactor.core.publisher.Mono
-import java.lang.Void
+import reactor.core.publisher.Flux
+import vottega.sse_server.dto.RoomEvent
 import java.util.UUID
 
 interface SseService {
-    fun enterRoom(roomId: Long, userId : UUID, sink : FluxSink<String>)
-    fun exitRoom(roomId: Long, userId : UUID , sink : FluxSink<String>)
-
-    fun broadcastToRoom(roomId: Long, message: String)
-
+    fun enterRoom(roomId: Long, userId : UUID) : Flux<RoomEvent>
+    fun exitRoom(roomId: Long, userId : UUID)
 }
