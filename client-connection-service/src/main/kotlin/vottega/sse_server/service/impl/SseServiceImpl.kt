@@ -13,7 +13,7 @@ class SseServiceImpl(private val kafkaProducer: KafkaProducer, private val sinkR
     SseService {
     override fun enterRoom(roomId: Long, userId: UUID) : Flux<RoomEvent> {
         kafkaProducer.participantEnterProducer(roomId, userId)
-        return sinkRepository.getRoomSink(roomId)
+        return sinkRepository.getRoomSink(roomId).asFlux()
     }
 
     override fun exitRoom(roomId: Long, userId: UUID) {
