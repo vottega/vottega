@@ -31,6 +31,7 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	implementation("io.projectreactor.kafka:reactor-kafka:1.3.23")
+	implementation("io.projectreactor:reactor-core:3.6.11")
 }
 
 kotlin {
