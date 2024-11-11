@@ -2,6 +2,7 @@ package vottega.room_service.service.impl
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import vottega.room_service.adaptor.RoomProducer
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
@@ -19,6 +20,7 @@ import java.util.*
 class RoomServiceImpl(
     private val roomRepository: RoomRepository,
     private val roomMapper: RoomMapper,
+    private val roomProducer: RoomProducer
 ) : RoomService {
 
     override fun createRoom(
@@ -37,6 +39,7 @@ class RoomServiceImpl(
     override fun updateRoom(roomId: Long, roomName: String?, status: RoomStatus?): RoomResponseDTO {
         val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
         room.update(roomName, status)
+        roomProducer.roomEditMessageProduce(room)
         return roomMapper.toRoomOutDTO(room)
     }
 
@@ -44,6 +47,7 @@ class RoomServiceImpl(
         val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
         participantInfoDTOS.forEach {
             room.addParticipant(it)
+            roomProducer.participantEditMessageProduce(room.participantList.last())
         }
         return roomMapper.toRoomOutDTO(room)
     }
@@ -61,6 +65,7 @@ class RoomServiceImpl(
     ): RoomResponseDTO {
         val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
         room.apply { updateParticipant(participantId, participantInfoDTO) }
+        room.participantList.find {it.id == participantId}?.let { roomProducer.participantEditMessageProduce(it) }
         return roomMapper.toRoomOutDTO(room)
     }
 
