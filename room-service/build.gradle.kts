@@ -34,7 +34,8 @@ dependencyManagement {
 
 
 repositories {
-	mavenCentral()
+	mavenCentral() // 기본 저장소
+	maven("https://packages.confluent.io/maven/") // Confluent 저장소
 }
 
 dependencies {
@@ -53,7 +54,8 @@ dependencies {
 	testImplementation("org.springframework.kafka:spring-kafka-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation("org.apache.avro:avro")
+	implementation("org.apache.avro:avro:1.11.4")
+	implementation("io.confluent:kafka-avro-serializer:7.5.0")
 	implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
 }
 
