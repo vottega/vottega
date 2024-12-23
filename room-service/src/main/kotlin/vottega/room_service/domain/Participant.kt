@@ -13,7 +13,6 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@Where(clause = "deleted_at IS NULL")
 data class Participant(
     var name: String,
     var phoneNumber: String? = null,
