@@ -1,22 +1,42 @@
 {
   "type": "record",
   "name": "Room",
-  "namespace": "vottega.room_service.avro",
+  "namespace": "main.room_service.avro",
   "fields": [
     {
       "name": "id",
       "type": "long"
     },
     {
-      "name": "name",
+      "name": "roomName",
       "type": "string"
     },
     {
-      "name": "participants",
-      "type": {
-        "type": "array",
-        "items": "Participant"
-      }
+        "name" : "participantRoleList"
+        "type" : {
+            "type" : "array",
+            "items" : {
+                "types" : "record"
+                "name" : "ParticipantRole"
+                "fields" : [
+                    {"name" : "id", "type" : "long"}
+                    {"name" : "role", "type" : "string"}
+                    {"name" : "canVote", "type" : "boolean"}
+                ]
+            }
+        }
+    }
+    {
+        "name" : "ownerId",
+        "type" : "long"
+    },
+    {
+        "name" : "status"
+        type": {
+                "type": "enum",
+                "name": "Status",
+                "symbols": ["NOT_STARTED", "PROGRESS", "FINISHED", "STOPPED"]
+              }
     },
     {
       "name": "createdAt",
@@ -34,25 +54,17 @@
     },
     {
       "name": "startedAt",
-      "type": [
-        "null",
-        {
+      "type": {
           "type": "long",
           "logicalType": "timestamp-millis"
         }
-      ],
-      "default": null
     },
     {
       "name": "finishedAt",
-      "type": [
-        "null",
-        {
+      "type": {
           "type": "long",
           "logicalType": "timestamp-millis"
         }
-      ],
-      "default": null
     }
   ]
 }

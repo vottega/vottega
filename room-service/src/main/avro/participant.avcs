@@ -24,18 +24,21 @@
       "default": null
     },
     {
-      "name": "role",
-      "type": ["null", "string"],
-      "default": null
-    },
-    {
-      "name": "canVote",
-      "type": ["null", "boolean"],
-      "default": null
-    },
+        "type" : "record"
+        "name" : "ParticipantRole"
+        "fields" : [
+            {"name" : "id", "type" : "long"}
+            {"name" : "role", "type" : "string"}
+            {"name" : "canVote", "type" : "boolean"}
+        ]
+    }
     {
       "name": "isEntered",
       "type": "boolean"
+    },
+    {
+      "name": "phoneNumber",
+      "type": "string"
     },
     {
       "name": "createdAt",
@@ -62,5 +65,12 @@
         "logicalType": "timestamp-millis"
       }
     }
+    {
+          "name": "deletedAt",
+          "type": {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }
+        }
   ]
 }
