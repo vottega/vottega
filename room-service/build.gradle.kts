@@ -3,7 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.24"
 	id("org.springframework.boot") version "3.3.2"
 	id("io.spring.dependency-management") version "1.1.6"
-	id("com.github.davidmc24.gradle.plugin.avro") version "1.3.0"
+	id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
 	kotlin("plugin.jpa") version "1.9.24"
 }
 
@@ -57,6 +57,8 @@ dependencies {
 	implementation("org.apache.avro:avro:1.11.4")
 	implementation("io.confluent:kafka-avro-serializer:7.5.0")
 	implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
+
+	implementation("org.apache.avro:avro:1.11.0")
 }
 
 kotlin {
@@ -67,9 +69,4 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
-}
-
-avro {
-	fieldVisibility.set("PUBLIC_DEPRECATED")
-	stringType.set("String")
 }

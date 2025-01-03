@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "Participant",
+  "name": "ParticipantAvro",
   "namespace": "vottega.room_service.avro",
   "fields": [
     {
@@ -20,18 +20,16 @@
     },
     {
       "name": "position",
-      "type": ["null", "string"],
+      "type": [
+        "null",
+        "string"
+      ],
       "default": null
     },
     {
-        "type" : "record"
-        "name" : "ParticipantRole"
-        "fields" : [
-            {"name" : "id", "type" : "long"}
-            {"name" : "role", "type" : "string"}
-            {"name" : "canVote", "type" : "boolean"}
-        ]
-    }
+      "name": "role",
+      "type": "ParticipantRoleAvro"
+    },
     {
       "name": "isEntered",
       "type": "boolean"
@@ -60,17 +58,25 @@
     },
     {
       "name": "lastUpdatedAt",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis"
-      }
-    }
-    {
-          "name": "deletedAt",
-          "type": {
-            "type": "long",
-            "logicalType": "timestamp-millis"
-          }
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
         }
+      ],
+      "default": null
+    },
+    {
+      "name": "deletedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    }
   ]
 }
