@@ -1,6 +1,10 @@
 spring:
+  security:
+    user:
+      name: minguni
+      password: minguni
   datasource:
-    url: jdbc:mysql://room-db:3306/room-db
+    url: jdbc:mariadb://localhost:3306/room-db
     username: minguni
     password: minguni
     driver-class-name: org.mariadb.jdbc.Driver
@@ -21,3 +25,11 @@ spring:
       schema.registry.url: http://localhost:8081
   profiles:
     active: local
+logging:
+  level:
+    org.springframework: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans
