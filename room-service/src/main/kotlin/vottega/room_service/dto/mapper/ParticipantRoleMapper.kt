@@ -16,6 +16,9 @@ class ParticipantRoleMapper {
       .setRole(role.role)
       .setCanVote(role.canVote)
       .build()
+  }
 
+  fun toParticipantRoleDTO(role: ParticipantRoleAvro): ParticipantRoleDTO {
+    return ParticipantRoleDTO(role.role, role.canVote)
   }
 }

@@ -1,9 +1,11 @@
 package vottega.room_service.dto.mapper
 
 import org.springframework.stereotype.Component
+import vottega.room_service.avro.Action
 import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.domain.Participant
 import vottega.room_service.dto.ParticipantResponseDTO
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Component
@@ -35,7 +37,21 @@ class ParticipantMapper(
       .setCreatedAt(participantResponseDTO.createdAt.toInstant(ZoneOffset.UTC))
       .setEnteredAt(participantResponseDTO.enteredAt?.toInstant(ZoneOffset.UTC))
       .setLastUpdatedAt(participantResponseDTO.lastUpdatedAt.toInstant(ZoneOffset.UTC))
+      .setAction(Action.EDIT)
       .build()
+  }
 
+  fun toParticipantResponse(participantAvro: ParticipantAvro): ParticipantResponseDTO {
+    return ParticipantResponseDTO(
+      id = participantAvro.id,
+      name = participantAvro.name,
+      roomId = participantAvro.roomId,
+      position = participantAvro.position,
+      participantRole = participantRoleMapper.toParticipantRoleDTO(participantAvro.role),
+      isEntered = participantAvro.isEntered,
+      createdAt = LocalDateTime.ofInstant(participantAvro.createdAt, ZoneOffset.UTC),
+      enteredAt = participantAvro.enteredAt?.let { LocalDateTime.ofInstant(it, ZoneOffset.UTC) },
+      lastUpdatedAt = LocalDateTime.ofInstant(participantAvro.lastUpdatedAt, ZoneOffset.UTC)
+    )
   }
 }
