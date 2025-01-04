@@ -23,7 +23,7 @@ class RoomMapper(
     )
   }
 
-  fun toAvro(roomResponseDTO: RoomResponseDTO): RoomAvro {
+  fun toRoomAvro(roomResponseDTO: RoomResponseDTO): RoomAvro {
     return RoomAvro.newBuilder()
       .setId(roomResponseDTO.id)
       .setRoomName(roomResponseDTO.name)

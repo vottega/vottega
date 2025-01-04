@@ -24,7 +24,7 @@ class ParticipantMapper(
     )
   }
 
-  fun toAvro(participantResponseDTO: ParticipantResponseDTO): ParticipantAvro {
+  fun toParticipantAvro(participantResponseDTO: ParticipantResponseDTO): ParticipantAvro {
     return ParticipantAvro.newBuilder()
       .setId(participantResponseDTO.id)
       .setName(participantResponseDTO.name)
