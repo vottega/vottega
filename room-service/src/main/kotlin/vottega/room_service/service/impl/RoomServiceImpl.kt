@@ -8,6 +8,7 @@ import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.dto.RoomResponseDTO
+import vottega.room_service.dto.mapper.ParticipantMapper
 import vottega.room_service.dto.mapper.RoomMapper
 import vottega.room_service.exception.RoomNotFoundException
 import vottega.room_service.repository.RoomRepository
@@ -19,7 +20,8 @@ import java.util.*
 class RoomServiceImpl(
   private val roomRepository: RoomRepository,
   private val roomMapper: RoomMapper,
-  private val roomProducer: RoomProducer
+  private val roomProducer: RoomProducer,
+  private val participantMapper: ParticipantMapper
 ) : RoomService {
 
   override fun createRoom(
@@ -38,15 +40,17 @@ class RoomServiceImpl(
   override fun updateRoom(roomId: Long, roomName: String?, status: RoomStatus?): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.update(roomName, status)
-    roomProducer.roomEditMessageProduce(room)
-    return roomMapper.toRoomOutDTO(room)
+    val roomDTO = roomMapper.toRoomOutDTO(room)
+    roomProducer.roomEditMessageProduce(roomDTO)
+    return roomDTO
   }
 
   override fun addParticipant(roomId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     participantInfoDTOS.forEach {
-      room.addParticipant(it)
-      roomProducer.participantEditMessageProduce(room.participantList.last())
+      val participant = room.addParticipant(it)
+      val participantDTO = participantMapper.toParticipantResponseDTO(participant)
+      roomProducer.participantEditMessageProduce(participantDTO)
     }
     return roomMapper.toRoomOutDTO(room)
   }
@@ -63,8 +67,9 @@ class RoomServiceImpl(
     participantInfoDTO: ParticipantInfoDTO
   ): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
-    room.apply { updateParticipant(participantId, participantInfoDTO) }
-    room.participantList.find { it.id == participantId }?.let { roomProducer.participantEditMessageProduce(it) }
+    val updatedParticipant = room.updateParticipant(participantId, participantInfoDTO)
+    val participantDTO = participantMapper.toParticipantResponseDTO(updatedParticipant)
+    roomProducer.participantEditMessageProduce(participantDTO)
     return roomMapper.toRoomOutDTO(room)
   }
 
