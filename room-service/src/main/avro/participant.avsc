@@ -27,6 +27,18 @@
       "default": null
     },
     {
+      "name": "action",
+      "type": {
+        "type": "enum",
+        "name": "Action",
+        "symbols": [
+          "ENTER",
+          "EXIT",
+          "EDIT"
+        ]
+      }
+    },
+    {
       "name": "role",
       "type": "ParticipantRoleAvro"
     },
