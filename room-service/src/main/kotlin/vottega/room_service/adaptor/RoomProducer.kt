@@ -1,14 +1,14 @@
 package vottega.room_service.adaptor
 
 import org.springframework.stereotype.Service
-import vottega.room_service.domain.Participant
-import vottega.room_service.domain.Room
+import vottega.room_service.dto.ParticipantResponseDTO
+import vottega.room_service.dto.RoomResponseDTO
 
 
 @Service
 interface RoomProducer {
 
-  fun roomEditMessageProduce(room: Room)
-  fun participantEditMessageProduce(participant: Participant)
+  fun roomEditMessageProduce(roomResponseDTO: RoomResponseDTO)
+  fun participantEditMessageProduce(participantResponseDTO: ParticipantResponseDTO)
 
 }
