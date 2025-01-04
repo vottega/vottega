@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class RoomServiceApplication
 
 fun main(args: Array<String>) {
-	runApplication<RoomServiceApplication>(*args)
+  runApplication<RoomServiceApplication>(*args)
 }

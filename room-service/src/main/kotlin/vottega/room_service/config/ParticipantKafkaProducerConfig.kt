@@ -12,19 +12,19 @@ import vottega.room_service.domain.Participant
 @Configuration
 class ParticipantKafkaProducerConfig {
 
-    @Bean
-    fun participantProducerFactory(): ProducerFactory<String, Participant> {
-        val config = mutableMapOf<String, Any>(
-            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
-            ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
-            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to "io.confluent.kafka.serializers.KafkaAvroSerializer",
-            "schema.registry.url" to "http://localhost:8081"
-        )
-        return DefaultKafkaProducerFactory(config)
-    }
+  @Bean
+  fun participantProducerFactory(): ProducerFactory<String, Participant> {
+    val config = mutableMapOf<String, Any>(
+      ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
+      ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
+      ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to "io.confluent.kafka.serializers.KafkaAvroSerializer",
+      "schema.registry.url" to "http://localhost:8081"
+    )
+    return DefaultKafkaProducerFactory(config)
+  }
 
-    @Bean
-    fun participantKafkaTemplate(): KafkaTemplate<String, Participant> {
-        return KafkaTemplate(participantProducerFactory())
-    }
+  @Bean
+  fun participantKafkaTemplate(): KafkaTemplate<String, Participant> {
+    return KafkaTemplate(participantProducerFactory())
+  }
 }
