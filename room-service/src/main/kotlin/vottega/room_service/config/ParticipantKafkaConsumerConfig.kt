@@ -1,4 +1,4 @@
-package com.example.config
+package vottega.room_service.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -7,7 +7,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import vottega.room_service.avro.ParticipantAvro
-import vottega.room_service.config.KafkaCommonConfig
 
 @EnableKafka
 @Configuration

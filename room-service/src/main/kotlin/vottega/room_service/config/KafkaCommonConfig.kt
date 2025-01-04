@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class KafkaCommonConfig(
   @Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
   @Value("\${spring.kafka.consumer.group-id}") private val defaultGroupId: String,
-  @Value("\${schema.registry.url}") private val schemaRegistryUrl: String
+  @Value("\${spring.kafka.properties.schema.registry.url}") private val schemaRegistryUrl: String
 ) {
   fun commonConsumerConfig(): Map<String, Any> {
     return mapOf(
