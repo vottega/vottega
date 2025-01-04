@@ -41,22 +41,22 @@ class Room(
   var finishedAt: LocalDateTime? = null
     private set
 
-  fun addParticipant(participantInfoDTO: ParticipantInfoDTO) {
+  fun addParticipant(participantInfoDTO: ParticipantInfoDTO): Participant {
     val participantRole = participantRoleList.find { it.role == participantInfoDTO.role }
       ?: throw RoleNotFoundException(participantInfoDTO.role)
-    this.participantList.add(
-      Participant(
-        participantInfoDTO.name,
-        participantInfoDTO.phoneNumber,
-        participantInfoDTO.position,
-        participantRole,
-        false,
-        this
-      )
+    val participant = Participant(
+      participantInfoDTO.name,
+      participantInfoDTO.phoneNumber,
+      participantInfoDTO.position,
+      participantRole,
+      false,
+      this
     )
+    this.participantList.add(participant)
+    return participant
   }
 
-  fun addParticipantRole(role: String, canVote: Boolean?) {
+  fun addParticipantRole(role: String, canVote: Boolean) {
     if (this.participantRoleList.find { it.role == role } != null) {
       throw RoleStatusConflictException(role)
     }
@@ -88,7 +88,7 @@ class Room(
     participant.remove()
   }
 
-  fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO) {
+  fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO): Participant {
     val participant = this.participantList.find { it.id == uuid }
     if (participant == null) {
       throw ParticipantNotFoundException(uuid)
@@ -96,7 +96,7 @@ class Room(
     val participantRole = (this.participantRoleList.find { it.role == participantInfoDTO.role }
       ?: throw RoleNotFoundException(participantInfoDTO.role))
 
-    participant.updateParticipant(
+    return participant.updateParticipant(
       participantInfoDTO.name,
       participantInfoDTO.phoneNumber,
       participantInfoDTO.position,

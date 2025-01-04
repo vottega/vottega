@@ -45,11 +45,12 @@ data class Participant(
     phoneNumber: String?,
     position: String? = null,
     participantRole: ParticipantRole? = null
-  ) {
+  ): Participant {
     name?.let { this.name = it }
     phoneNumber?.let { this.phoneNumber = it }
     position?.let { this.position = it }
     participantRole?.let { this.participantRole = it }
+    return this
   }
 
   @PrePersist
