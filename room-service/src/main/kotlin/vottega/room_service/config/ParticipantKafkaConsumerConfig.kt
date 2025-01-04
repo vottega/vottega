@@ -1,35 +1,30 @@
 package com.example.config
 
-import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import vottega.room_service.domain.Participant
+import vottega.room_service.avro.ParticipantAvro
+import vottega.room_service.config.KafkaCommonConfig
 
 @EnableKafka
 @Configuration
-class ParticipantKafkaConsumerConfig {
+class ParticipantKafkaConsumerConfig(
+  private val kafkaCommonConfig: KafkaCommonConfig
+) {
 
   @Bean
-  fun participantConsumerFactory(): ConsumerFactory<String, Participant> {
-    val config = mutableMapOf<String, Any>(
-      ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
-      ConsumerConfig.GROUP_ID_CONFIG to "participant-group",
-      ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
-      ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to "io.confluent.kafka.serializers.KafkaAvroDeserializer",
-      "schema.registry.url" to "http://localhost:8081",
-      "specific.avro.reader" to true
+  fun participantConsumerFactory(): ConsumerFactory<Long, ParticipantAvro> {
+    return DefaultKafkaConsumerFactory(
+      kafkaCommonConfig.commonConsumerConfig()
     )
-    return DefaultKafkaConsumerFactory(config)
   }
 
   @Bean
-  fun participantKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Participant> {
-    val factory = ConcurrentKafkaListenerContainerFactory<String, Participant>()
+  fun participantKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<Long, ParticipantAvro> {
+    val factory = ConcurrentKafkaListenerContainerFactory<Long, ParticipantAvro>()
     factory.consumerFactory = participantConsumerFactory()
     return factory
   }
