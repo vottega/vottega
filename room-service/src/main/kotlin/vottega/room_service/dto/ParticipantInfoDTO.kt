@@ -6,5 +6,4 @@ data class ParticipantInfoDTO(
   val phoneNumber: String? = null,
   val position: String? = null,
   val role: String? = null,
-  val canVote: Boolean? = null
 )
