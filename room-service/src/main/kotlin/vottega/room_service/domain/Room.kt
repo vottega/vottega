@@ -13,14 +13,14 @@ import java.util.*
 @Entity
 class Room(
   roomName: String,
-  owserId: Long,
+  ownerId: Long,
 ) {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   var id: Long? = null
   var roomName: String = roomName
     private set
-  var ownerId: Long = owserId
+  var ownerId: Long = ownerId
     private set
 
   @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
