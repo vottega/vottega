@@ -8,7 +8,12 @@ import java.util.*
 
 interface RoomService {
 
-  fun createRoom(roomName: String, ownerId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO
+  fun createRoom(
+    roomName: String,
+    ownerId: Long,
+    participantRoleDTOList: List<ParticipantRoleDTO>,
+  ): RoomResponseDTO
+
   fun updateRoom(roomId: Long, roomName: String? = null, status: RoomStatus? = null): RoomResponseDTO
   fun addParticipant(roomId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO
   fun removeParticipant(roomId: Long, participantId: UUID): RoomResponseDTO

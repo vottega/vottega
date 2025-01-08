@@ -27,13 +27,12 @@ class RoomServiceImpl(
   override fun createRoom(
     roomName: String,
     ownerId: Long,
-    participantInfoDTOS: List<ParticipantInfoDTO>
+    participantRoleDTOList: List<ParticipantRoleDTO>,
   ): RoomResponseDTO {
     val room = Room(roomName, ownerId)
     roomRepository.save(room)
-    participantInfoDTOS.forEach {
-      room.addParticipant(it)
-    }
+    participantRoleDTOList.forEach { room.addParticipantRole(it.role, it.canVote) }
+
     return roomMapper.toRoomOutDTO(room)
   }
 
