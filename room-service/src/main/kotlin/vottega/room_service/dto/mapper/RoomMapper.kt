@@ -1,8 +1,10 @@
 package vottega.room_service.dto.mapper
 
 import main.room_service.avro.RoomAvro
+import main.room_service.avro.Status
 import org.springframework.stereotype.Component
 import vottega.room_service.domain.Room
+import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.RoomResponseDTO
 import java.time.ZoneOffset
 
@@ -15,7 +17,10 @@ class RoomMapper(
     return RoomResponseDTO(
       id = room.id ?: throw IllegalStateException("Room ID is null"),
       name = room.roomName,
-      participants = room.participantList.map { participant -> participantMapper.toParticipantResponseDTO(participant) },
+      ownerId = room.ownerId,
+      status = room.status,
+      participants =
+        room.participantList.map { participant -> participantMapper.toParticipantResponseDTO(participant) },
       createdAt = room.createdAt ?: throw IllegalStateException("createdAt is null"),
       lastUpdatedAt = room.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null"),
       startedAt = room.startedAt,
@@ -27,6 +32,8 @@ class RoomMapper(
     return RoomAvro.newBuilder()
       .setId(roomResponseDTO.id)
       .setRoomName(roomResponseDTO.name)
+      .setOwnerId(roomResponseDTO.ownerId)
+      .setStatus(roomStatusToStatus(roomResponseDTO.status))
       .setParticipantRoleList(
         roomResponseDTO.participants.map { participantRoleMapper.toParticipantRoleAvro(it.participantRole) }
       )
@@ -35,5 +42,14 @@ class RoomMapper(
       .setStartedAt(roomResponseDTO.startedAt?.toInstant(ZoneOffset.UTC))
       .setFinishedAt(roomResponseDTO.finishedAt?.toInstant(ZoneOffset.UTC))
       .build()
+  }
+
+  private fun roomStatusToStatus(roomStatus: RoomStatus): Status {
+    return when (roomStatus) {
+      RoomStatus.NOT_STARTED -> Status.NOT_STARTED
+      RoomStatus.STOPPED -> Status.STOPPED
+      RoomStatus.PROGRESS -> Status.PROGRESS
+      RoomStatus.FINISHED -> Status.FINISHED
+    }
   }
 }
