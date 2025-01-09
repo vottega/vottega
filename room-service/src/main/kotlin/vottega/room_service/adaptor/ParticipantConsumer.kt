@@ -11,7 +11,7 @@ class ParticipantConsumer(
   val roomService: RoomService,
 ) {
   @KafkaListener(
-    topics = ["participant-info"],
+    topics = ["participant"],
     groupId = "\${spring.kafka.consumer.group-id}",
     containerFactory = "participantKafkaListenerContainerFactory"
   )

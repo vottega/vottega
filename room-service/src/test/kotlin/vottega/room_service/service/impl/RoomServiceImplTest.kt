@@ -4,27 +4,20 @@ import jakarta.transaction.Transactional
 import main.room_service.avro.RoomAvro
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
-import org.springframework.kafka.test.context.EmbeddedKafka
-import org.testcontainers.containers.KafkaContainer
-import org.testcontainers.utility.DockerImageName
 import vottega.room_service.config.KafkaCommonConfig
 import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.repository.RoomRepository
 import vottega.room_service.service.RoomService
 import java.time.Duration
 
+//TODO EMBEDDED KAFKA를 사용하여 테스트 코드 작성
 @Transactional
 @SpringBootTest
-@EmbeddedKafka(
-  partitions = 1, topics = ["room"]
-)
 class RoomServiceImplTest {
   @Autowired
   private lateinit var roomRepository: RoomRepository
@@ -35,23 +28,15 @@ class RoomServiceImplTest {
   @Autowired
   private lateinit var kafkaCommonConfig: KafkaCommonConfig
 
-  private val kafkaContainer = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"))
 
-  private lateinit var kafkaConsumer: KafkaConsumer<String, String>
+  private lateinit var kafkaConsumer: KafkaConsumer<String, RoomAvro>
 
 
   @BeforeEach
   fun setUp() {
-    kafkaContainer.start()
-    val factory = ConcurrentKafkaListenerContainerFactory<Long, RoomAvro>()
     val consumerProps = kafkaCommonConfig.commonConsumerConfig()
-    val consumer = KafkaConsumer<String, RoomAvro>(consumerProps)
-    consumer.subscribe(listOf("room"))
-  }
-
-  @AfterEach
-  fun tearDown() {
-    kafkaContainer.stop()
+    kafkaConsumer = KafkaConsumer<String, RoomAvro>(consumerProps)
+    kafkaConsumer.subscribe(listOf("room"))
   }
 
   @Test
@@ -90,45 +75,9 @@ class RoomServiceImplTest {
     //then
     val foundRoom = roomRepository.findById(roomResponseDTO.id)
     assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
-    val records = kafkaConsumer.poll(Duration.ofSeconds(1))
-    val record = records.first()
-    println(record.value())
+    val records = kafkaConsumer.poll(Duration.ofSeconds(10))
+    println("records : ${records.count()}")
+    println(records.first())
 
-  }
-
-  @Test
-  fun addParticipant() {
-  }
-
-  @Test
-  fun removeParticipant() {
-  }
-
-  @Test
-  fun updateParticipant() {
-  }
-
-  @Test
-  fun enterParticipant() {
-  }
-
-  @Test
-  fun exitParticipant() {
-  }
-
-  @Test
-  fun addRole() {
-  }
-
-  @Test
-  fun deleteRole() {
-  }
-
-  @Test
-  fun getRoom() {
-  }
-
-  @Test
-  fun getRoomList() {
   }
 }
