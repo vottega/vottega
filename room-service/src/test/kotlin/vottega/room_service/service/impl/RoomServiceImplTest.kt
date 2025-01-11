@@ -4,15 +4,19 @@ import jakarta.transaction.Transactional
 import main.room_service.avro.RoomAvro
 import org.apache.kafka.clients.consumer.Consumer
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.kafka.test.context.EmbeddedKafka
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantRoleDTO
+import vottega.room_service.dto.mapper.ParticipantRoleMapper
 import vottega.room_service.exception.RoomStatusConflictException
 import vottega.room_service.repository.RoomRepository
 import vottega.room_service.service.RoomService
@@ -25,7 +29,11 @@ import java.time.Duration
 )
 @SpringBootTest
 @Import(TestConfig::class)
+@Execution(ExecutionMode.SAME_THREAD)
 class RoomServiceImplTest {
+
+  @Autowired
+  private lateinit var participantRoleMapper: ParticipantRoleMapper
 
   @Autowired
   private lateinit var roomRepository: RoomRepository
@@ -129,9 +137,112 @@ class RoomServiceImplTest {
     assertThat(records.count()).isEqualTo(0)
   }
 
-  private fun getNextRoomAvro(): RoomAvro {
+  @Test
+  @DisplayName("방 상태 변경 테스트 | 상태 변경 PROGRESS -> STOPPED")
+  fun updateStatus3() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
+    roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
+    getNextRoomAvro()
+
+    //when
+    val newStatus = RoomStatus.STOPPED
+    val successRoomName = "success room name"
+    val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
+
+    //then
+    val foundRoom = roomRepository.findById(roomResponseDTO.id)
+    assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
+    assertThat(updatedRoom.status).isEqualTo(newStatus)
+    val roomAvro = getNextRoomAvro()
+    assertThat(roomAvro.id).isEqualTo(roomResponseDTO.id)
+    assertThat(roomAvro.roomName).isEqualTo(successRoomName)
+  }
+
+  @Test
+  @DisplayName("방 상태 변경 테스트 | 상태 변경 PROGRESS -> ?")
+  fun updateStatus4() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
+    roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
+    getNextRoomAvro()
+
+    //when
+    val newStatus = RoomStatus.FINISHED
+    val successRoomName = "success room name"
+    val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
+
+    //then
+    val foundRoom = roomRepository.findById(roomResponseDTO.id)
+    assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
+    assertThat(updatedRoom.status).isEqualTo(newStatus)
+    val roomAvro = getNextRoomAvro()
+    assertThat(roomAvro.id).isEqualTo(roomResponseDTO.id)
+    assertThat(roomAvro.roomName).isEqualTo(successRoomName)
+  }
+
+  @Test
+  @DisplayName("방 상태 변경 테스트 | 상태 변경 NOT STARTED -> FINISHED | 실패해서 카프카에 전송이 안와야 함")
+  fun updateStatus5() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
+    roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
+    getNextRoomAvro()
+
+    //when
+    assertThrows<RoomStatusConflictException> {
+      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
+    }
+    assertThrows<RoomStatusConflictException> {
+      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.NOT_STARTED)
+    }
+
+    //then
+    val foundRoom = roomRepository.findById(roomResponseDTO.id)
+    assertThat(foundRoom.get().status).isEqualTo(RoomStatus.PROGRESS)
     val records = roomKafkaConsumer.poll(Duration.ofSeconds(10))
-    assertThat(records.count()).isEqualTo(1)
+    assertThat(records.count()).isEqualTo(0)
+  }
+
+  @Test
+  @DisplayName("방 상태 변경 테스트 | 상태 변경 STOPPED -> PROGRESS")
+  fun updateStatus6() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
+    roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
+    getNextRoomAvro()
+    roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.STOPPED)
+    getNextRoomAvro()
+    //when
+    val newStatus = RoomStatus.PROGRESS
+    val successRoomName = "success room name"
+    val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
+
+    //then
+    val foundRoom = roomRepository.findById(roomResponseDTO.id)
+    assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
+    assertThat(updatedRoom.status).isEqualTo(newStatus)
+    val roomAvro = getNextRoomAvro()
+    println(roomAvro.roomName)
+    assertThat(roomAvro.id).isEqualTo(roomResponseDTO.id)
+    assertThat(roomAvro.roomName).isEqualTo(successRoomName)
+  }
+
+  @AfterEach
+  fun tearDown() {
+    roomKafkaConsumer.poll(Duration.ofSeconds(3))
+  }
+
+  private fun getNextRoomAvro(): RoomAvro {
+    val records = roomKafkaConsumer.poll(Duration.ofSeconds(3))
     return records.iterator().next().value()
   }
 
