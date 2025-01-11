@@ -133,7 +133,7 @@ class Room(
   }
 
   private fun start() {
-    if (this.status != RoomStatus.NOT_STARTED || this.status != RoomStatus.STOPPED) {
+    if (this.status != RoomStatus.NOT_STARTED && this.status != RoomStatus.STOPPED) {
       throw RoomStatusConflictException(this.status)
     }
     this.status = RoomStatus.PROGRESS
@@ -151,7 +151,7 @@ class Room(
   }
 
   private fun stop() {
-    if (this.status == RoomStatus.STOPPED) {
+    if (this.status != RoomStatus.PROGRESS) {
       throw RoomStatusConflictException(this.status)
     }
     this.status = RoomStatus.STOPPED
