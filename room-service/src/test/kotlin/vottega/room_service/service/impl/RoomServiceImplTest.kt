@@ -4,22 +4,18 @@ import jakarta.transaction.Transactional
 import main.room_service.avro.RoomAvro
 import org.apache.kafka.clients.consumer.Consumer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaProducerFactory
-import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.test.EmbeddedKafkaBroker
+import org.springframework.context.annotation.Import
 import org.springframework.kafka.test.context.EmbeddedKafka
-import vottega.room_service.adaptor.impl.RoomProducerImpl
-import vottega.room_service.avro.ParticipantAvro
+import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantRoleDTO
-import vottega.room_service.dto.mapper.ParticipantMapper
-import vottega.room_service.dto.mapper.RoomMapper
+import vottega.room_service.exception.RoomStatusConflictException
 import vottega.room_service.repository.RoomRepository
+import vottega.room_service.service.RoomService
 import java.time.Duration
 
 @Transactional
@@ -28,77 +24,18 @@ import java.time.Duration
   topics = ["room", "participant"]
 )
 @SpringBootTest
+@Import(TestConfig::class)
 class RoomServiceImplTest {
-  @Autowired
-  private lateinit var embeddedKafka: EmbeddedKafkaBroker
-
-  @Autowired
-  private lateinit var roomMapper: RoomMapper
-
-  @Autowired
-  private lateinit var participantMapper: ParticipantMapper
 
   @Autowired
   private lateinit var roomRepository: RoomRepository
 
-  private lateinit var roomService: RoomServiceImpl
+  @Autowired
+  private lateinit var roomService: RoomService
 
-
-  private lateinit var roomKafkaTemplate: KafkaTemplate<Long, RoomAvro>
-  private lateinit var participantKafkaTemplate: KafkaTemplate<Long, ParticipantAvro>
-
-
-  private lateinit var roomProducer: RoomProducerImpl
+  @Autowired
   private lateinit var roomKafkaConsumer: Consumer<Long, RoomAvro>
-  private lateinit var participantKafkaConsumer: Consumer<Long, ParticipantAvro>
 
-
-  @BeforeEach
-  fun setUp() {
-    // ProducerFactory 생성
-    val producerProps = mutableMapOf<String, Any>(
-      "bootstrap.servers" to embeddedKafka.brokersAsString,
-      "key.serializer" to org.apache.kafka.common.serialization.LongSerializer::class.java,
-      "value.serializer" to io.confluent.kafka.serializers.KafkaAvroSerializer::class.java,
-      "schema.registry.url" to "mock://embedded-schema-registry"
-    )
-    val producerFactory = DefaultKafkaProducerFactory<Long, RoomAvro>(producerProps)
-    roomKafkaTemplate = KafkaTemplate(producerFactory)
-
-    val participantProducerFactory = DefaultKafkaProducerFactory<Long, ParticipantAvro>(producerProps)
-    participantKafkaTemplate = KafkaTemplate(participantProducerFactory)
-
-    // RoomProducerImpl 생성
-    roomProducer = RoomProducerImpl(
-      roomKafkaTemplate = roomKafkaTemplate,
-      participantKafkaTemplate = participantKafkaTemplate,
-      roomMapper = roomMapper, // 필요 시 Mock으로 주입
-      participantMapper = participantMapper // 필요 시 Mock으로 주입
-    )
-
-    val consumerProps = mutableMapOf<String, Any>(
-      "bootstrap.servers" to embeddedKafka.brokersAsString,
-      "group.id" to "test-group",
-      "key.deserializer" to org.apache.kafka.common.serialization.LongDeserializer::class.java,
-      "value.deserializer" to io.confluent.kafka.serializers.KafkaAvroDeserializer::class.java,
-      "schema.registry.url" to "mock://embedded-schema-registry",
-      "specific.avro.reader" to true
-    )
-    val roomConsumerFactory = DefaultKafkaConsumerFactory<Long, RoomAvro>(consumerProps)
-    val participantConsumerFactory = DefaultKafkaConsumerFactory<Long, ParticipantAvro>(consumerProps)
-    roomKafkaConsumer = roomConsumerFactory.createConsumer()
-    roomKafkaConsumer.subscribe(listOf("room"))
-
-    participantKafkaConsumer = participantConsumerFactory.createConsumer()
-    participantKafkaConsumer.subscribe(listOf("participant"))
-
-    roomService = RoomServiceImpl(
-      roomRepository = roomRepository,
-      roomProducer = roomProducer,
-      roomMapper = roomMapper,
-      participantMapper = participantMapper
-    )
-  }
 
   @Test
   @DisplayName("방을 생성 후 확인 테스트")
@@ -123,6 +60,7 @@ class RoomServiceImplTest {
   }
 
   @Test
+  @DisplayName("방 이름 변경 테스트 | 카프카 메시지 전송 확인")
   fun updateRoomName() {
     //given
     val roomName = "testRoom"
@@ -142,4 +80,59 @@ class RoomServiceImplTest {
     assertThat(record.value().id).isEqualTo(roomResponseDTO.id)
     assertThat(record.value().roomName).isEqualTo(newRoomName)
   }
+
+  @Test
+  @DisplayName("방 상태 변경 테스트 | 상태 변경 NOT STARTED -> PROGRESS")
+  fun updateStatus1() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
+
+    //when
+    val newStatus = RoomStatus.PROGRESS
+    val successRoomName = "success room name"
+    val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
+
+    //then
+    val foundRoom = roomRepository.findById(roomResponseDTO.id)
+    assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
+    assertThat(updatedRoom.status).isEqualTo(newStatus)
+    val roomAvro = getNextRoomAvro()
+    assertThat(roomAvro.id).isEqualTo(roomResponseDTO.id)
+    assertThat(roomAvro.roomName).isEqualTo(successRoomName)
+  }
+
+  @Test
+  @DisplayName("방 상태 변경 테스트 | 상태 변경 NOT STARTED -> FINISHED | 실패해서 카프카에 전송이 안와야 함")
+  fun updateStatus2() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
+
+    //when
+    assertThrows<RoomStatusConflictException> {
+      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.FINISHED)
+    }
+    assertThrows<RoomStatusConflictException> {
+      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.STOPPED)
+    }
+    assertThrows<RoomStatusConflictException> {
+      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.NOT_STARTED)
+    }
+
+    //then
+    val foundRoom = roomRepository.findById(roomResponseDTO.id)
+    assertThat(foundRoom.get().status).isEqualTo(RoomStatus.NOT_STARTED)
+    val records = roomKafkaConsumer.poll(Duration.ofSeconds(10))
+    assertThat(records.count()).isEqualTo(0)
+  }
+
+  private fun getNextRoomAvro(): RoomAvro {
+    val records = roomKafkaConsumer.poll(Duration.ofSeconds(10))
+    assertThat(records.count()).isEqualTo(1)
+    return records.iterator().next().value()
+  }
+
 }
