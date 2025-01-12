@@ -105,4 +105,9 @@ class RoomServiceImpl(
   override fun getRoomList(userId: Long): List<RoomResponseDTO> {
     return roomRepository.findByUserId(userId).map { roomMapper.toRoomOutDTO(it) }
   }
+
+  override fun isParticipantInRoom(roomId: Long, participantId: UUID): Boolean {
+    val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
+    return room.participantList.any { it.id == participantId }
+  }
 }
