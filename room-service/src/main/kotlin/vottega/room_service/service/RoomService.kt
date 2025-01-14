@@ -29,6 +29,4 @@ interface RoomService {
 
   fun getRoomList(userId: Long): List<RoomResponseDTO>
 
-  fun isParticipantInRoom(roomId: Long, participantId: UUID): Boolean
-
 }

@@ -1,6 +1,7 @@
 package vottega.room_service.service.impl
 
 import jakarta.transaction.Transactional
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import vottega.room_service.adaptor.RoomProducer
 import vottega.room_service.domain.Room
@@ -24,6 +25,7 @@ class RoomServiceImpl(
   private val participantMapper: ParticipantMapper
 ) : RoomService {
 
+  @PreAuthorize("hasRole('USER')")
   override fun createRoom(
     roomName: String,
     ownerId: Long,
@@ -36,6 +38,8 @@ class RoomServiceImpl(
     return roomMapper.toRoomOutDTO(room)
   }
 
+
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun updateRoom(roomId: Long, roomName: String?, status: RoomStatus?): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.update(roomName, status)
@@ -44,6 +48,8 @@ class RoomServiceImpl(
     return roomDTO
   }
 
+
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun addParticipant(roomId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     participantInfoDTOS.forEach {
@@ -54,12 +60,16 @@ class RoomServiceImpl(
     return roomMapper.toRoomOutDTO(room)
   }
 
+
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun removeParticipant(roomId: Long, participantId: UUID): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.apply { removeParticipant(participantId) }
     return roomMapper.toRoomOutDTO(room)
   }
 
+
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun updateParticipant(
     roomId: Long,
     participantId: UUID,
@@ -85,29 +95,30 @@ class RoomServiceImpl(
     return roomMapper.toRoomOutDTO(room)
   }
 
+
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun addRole(roomId: Long, roleInfo: ParticipantRoleDTO): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.apply { addParticipantRole(roleInfo.role, roleInfo.canVote) }
     return roomMapper.toRoomOutDTO(room)
   }
 
+
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun deleteRole(roomId: Long, role: String): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.apply { deleteParticipantRole(role) }
     return roomMapper.toRoomOutDTO(room)
   }
 
+  @PreAuthorize("@roomSecurity.isParticipantInRoomAndCanVote(authentication.principal, authentication.credentials, false )")
   override fun getRoom(roomId: Long): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     return roomMapper.toRoomOutDTO(room)
   }
 
+  @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun getRoomList(userId: Long): List<RoomResponseDTO> {
     return roomRepository.findByUserId(userId).map { roomMapper.toRoomOutDTO(it) }
-  }
-
-  override fun isParticipantInRoom(roomId: Long, participantId: UUID): Boolean {
-    val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
-    return room.participantList.any { it.id == participantId }
   }
 }
