@@ -1,6 +1,9 @@
 package vottega.room_service.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.Filter
+import org.hibernate.annotations.FilterDef
+import org.hibernate.annotations.Filters
 import java.time.LocalDateTime
 import java.util.*
 
@@ -8,6 +11,10 @@ import java.util.*
 @Table(
   name = "participant",
   uniqueConstraints = [UniqueConstraint(columnNames = ["name", "room_id"])]
+)
+@FilterDef(name = "deletedFilter")
+@Filters(
+  Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 )
 class Participant(
   var name: String,

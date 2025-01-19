@@ -1,6 +1,7 @@
 package vottega.room_service.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.Filter
 import org.springframework.dao.DuplicateKeyException
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
@@ -29,6 +30,7 @@ class Room(
     private set
 
   @OneToMany(mappedBy = "room", orphanRemoval = true, cascade = [CascadeType.ALL])
+  @Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
   var participantRoleList: MutableList<ParticipantRole> = mutableListOf()
     private set
   var status: RoomStatus = RoomStatus.NOT_STARTED
