@@ -1,6 +1,7 @@
 package vottega.room_service.domain
 
 import jakarta.persistence.*
+import org.springframework.dao.DuplicateKeyException
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.exception.ParticipantNotFoundException
@@ -44,13 +45,16 @@ class Room(
   fun addParticipant(participantInfoDTO: ParticipantInfoDTO): Participant {
     val participantRole = participantRoleList.find { it.role == participantInfoDTO.role }
       ?: throw RoleNotFoundException(participantInfoDTO.role)
+    if (participantList.find { it.name == participantInfoDTO.name } != null) {
+      throw DuplicateKeyException("Participant name is duplicated")
+    }
     val participant = Participant(
       participantInfoDTO.name,
       participantInfoDTO.phoneNumber,
       participantInfoDTO.position,
       participantRole,
       false,
-      this
+      this,
     )
     this.participantList.add(participant)
     return participant

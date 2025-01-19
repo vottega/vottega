@@ -6,7 +6,7 @@ import jakarta.persistence.*
 class ParticipantRole(
   room: Room,
   role: String,
-  canVote: Boolean = true
+  canVote: Boolean = true,
 ) {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,7 @@ class ParticipantRole(
     private set
   var canVote: Boolean = canVote
     private set
+  
 
   fun updateCanVote(canVote: Boolean) {
     this.canVote = canVote

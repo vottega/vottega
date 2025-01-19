@@ -5,7 +5,11 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-data class Participant(
+@Table(
+  name = "participant",
+  uniqueConstraints = [UniqueConstraint(columnNames = ["name", "room_id"])]
+)
+class Participant(
   var name: String,
   var phoneNumber: String? = null,
   var position: String? = null,
@@ -16,8 +20,7 @@ data class Participant(
   @ManyToOne
   @JoinColumn(name = "room_id", nullable = false)
   val room: Room,
-
-  ) {
+) {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,6 +29,8 @@ data class Participant(
   var createdAt: LocalDateTime? = null
   var lastUpdatedAt: LocalDateTime? = null
   var deletedAt: LocalDateTime? = null
+
+
   fun enter() {
     this.isEntered = true
     this.enteredAt = LocalDateTime.now()

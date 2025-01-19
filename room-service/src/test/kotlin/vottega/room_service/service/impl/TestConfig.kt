@@ -55,6 +55,12 @@ class TestConfig {
     return getKafkaConsumer<RoomAvro>("room")
   }
 
+  @Bean
+  @Primary
+  fun participantKafkaConsumer(): Consumer<Long, ParticipantAvro> {
+    return getKafkaConsumer<ParticipantAvro>("participant")
+  }
+
   private fun <T> getKafkaTemplate(): KafkaTemplate<Long, T> {
     val producerProps = mutableMapOf<String, Any>(
       "bootstrap.servers" to embeddedKafka.brokersAsString,

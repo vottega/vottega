@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.kafka.test.context.EmbeddedKafka
+import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.dto.mapper.ParticipantRoleMapper
@@ -43,6 +44,9 @@ class RoomServiceImplTest {
 
   @Autowired
   private lateinit var roomKafkaConsumer: Consumer<Long, RoomAvro>
+
+  @Autowired
+  private lateinit var participantKafkaConsumer: Consumer<Long, ParticipantAvro>
 
 
   @Test
@@ -238,6 +242,7 @@ class RoomServiceImplTest {
 
   @AfterEach
   fun tearDown() {
+    participantKafkaConsumer.poll(Duration.ofSeconds(3))
     roomKafkaConsumer.poll(Duration.ofSeconds(3))
   }
 

@@ -53,9 +53,13 @@ class RoomServiceImpl(
   override fun addParticipant(roomId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     participantInfoDTOS.forEach {
-      val participant = room.addParticipant(it)
-      val participantDTO = participantMapper.toParticipantResponseDTO(participant)
-      roomProducer.participantEditMessageProduce(participantDTO)
+      room.addParticipant(it)
+    }
+    roomRepository.save(room)
+    participantInfoDTOS.forEach { participantInfoDTO ->
+      room.participantList.find { participantInfoDTO.name == it.name }?.let { participant ->
+        roomProducer.participantEditMessageProduce(participantMapper.toParticipantResponseDTO(participant))
+      }
     }
     return roomMapper.toRoomOutDTO(room)
   }

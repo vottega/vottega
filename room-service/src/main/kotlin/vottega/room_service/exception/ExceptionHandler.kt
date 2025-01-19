@@ -1,5 +1,6 @@
 package vottega.room_service.exception
 
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -11,7 +12,11 @@ class ExceptionHandler {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   fun handleResourceNotFoundException(e: RoomNotFoundException) = e.message
 
-  @ExceptionHandler(RoomStatusConflictException::class, RoleStatusConflictException::class)
+  @ExceptionHandler(
+    RoomStatusConflictException::class,
+    RoleStatusConflictException::class,
+    DuplicateKeyException::class
+  )
   @ResponseStatus(HttpStatus.CONFLICT)
   fun handleRoomStatusConflictException(e: RoomStatusConflictException) = e.message
 }
