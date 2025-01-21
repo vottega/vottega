@@ -1,9 +1,8 @@
 package vottega.room_service.domain
 
 import jakarta.persistence.*
-import org.hibernate.annotations.Filter
-import org.hibernate.annotations.FilterDef
-import org.hibernate.annotations.Filters
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
 import java.util.*
 
@@ -12,10 +11,8 @@ import java.util.*
   name = "participant",
   uniqueConstraints = [UniqueConstraint(columnNames = ["name", "room_id"])]
 )
-@FilterDef(name = "deletedFilter")
-@Filters(
-  Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
-)
+@SQLDelete(sql = "UPDATE participant SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at is NULL")
 class Participant(
   var name: String,
   var phoneNumber: String? = null,

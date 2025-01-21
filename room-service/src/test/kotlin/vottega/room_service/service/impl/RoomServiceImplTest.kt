@@ -1,5 +1,6 @@
 package vottega.room_service.service.impl
 
+import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import main.room_service.avro.RoomAvro
 import org.apache.kafka.clients.consumer.Consumer
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.kafka.test.context.EmbeddedKafka
 import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.domain.enumeration.RoomStatus
+import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.dto.mapper.ParticipantRoleMapper
 import vottega.room_service.exception.RoomStatusConflictException
@@ -47,6 +49,9 @@ class RoomServiceImplTest {
 
   @Autowired
   private lateinit var participantKafkaConsumer: Consumer<Long, ParticipantAvro>
+
+  @Autowired
+  private lateinit var entityManager: EntityManager
 
 
   @Test
@@ -235,15 +240,73 @@ class RoomServiceImplTest {
     assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
     assertThat(updatedRoom.status).isEqualTo(newStatus)
     val roomAvro = getNextRoomAvro()
-    println(roomAvro.roomName)
     assertThat(roomAvro.id).isEqualTo(roomResponseDTO.id)
     assertThat(roomAvro.roomName).isEqualTo(successRoomName)
   }
 
+  @Test
+  @DisplayName("참가자 추가 테스트")
+  fun addParticipant() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val participantRoleDTO1 = ParticipantRoleDTO("voter", true)
+    val participantRoleDTO2 = ParticipantRoleDTO("viewer", false)
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf(participantRoleDTO1, participantRoleDTO2))
+
+    //when
+    val participant1 = ParticipantInfoDTO("민균", null, "회장", "voter")
+    val participant2 = ParticipantInfoDTO("성윤", null, "따까리", "viewer")
+    roomService.addParticipant(roomResponseDTO.id, listOf(participant1, participant2))
+
+    //then
+    val foundRoom = roomService.getRoom(roomResponseDTO.id)
+    assertThat(foundRoom.participants.size).isEqualTo(2)
+    assertThat(foundRoom.participants).anyMatch({ it.name == participant1.name && it.participantRole.role == participant1.role && it.participantRole.canVote })
+    assertThat(foundRoom.participants).anyMatch({ it.name == participant2.name && it.participantRole.role == participant2.role && !it.participantRole.canVote })
+
+    val records = participantKafkaConsumer.poll(Duration.ofSeconds(3))
+    println(records)
+    println(records.count())
+    assertThat(records.count()).isEqualTo(2)
+    val participant1Avro = records.find { it.value().name == participant1.name }!!.value()
+    assertThat(participant1Avro.name).isEqualTo(participant1.name)
+    val participant2Avro = records.find { it.value().name == participant2.name }!!.value()
+    assertThat(participant2Avro.name).isEqualTo(participant2.name)
+  }
+
+  @Test
+  @DisplayName("참가자 삭제 테스트")
+  fun removeParticipant() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val participantRoleDTO1 = ParticipantRoleDTO("voter", true)
+    val participantRoleDTO2 = ParticipantRoleDTO("viewer", false)
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf(participantRoleDTO1, participantRoleDTO2))
+    val participant1 = ParticipantInfoDTO("민균", null, "회장", "voter")
+    val participant2 = ParticipantInfoDTO("성윤", null, "따까리", "viewer")
+    roomService.addParticipant(roomResponseDTO.id, listOf(participant1, participant2))
+
+    //when
+    val foundRoom = roomService.getRoom(roomResponseDTO.id)
+    val participantId1 = foundRoom.participants[0].id
+    val participantId2 = foundRoom.participants[1].id
+    roomService.removeParticipant(roomResponseDTO.id, participantId1)
+    entityManager.flush()
+
+    //then// null은 잘되는데 필터가 안된다 ㅅㅂ
+    val foundRoom2 = roomService.getRoom(roomResponseDTO.id)
+    assertThat(foundRoom2.participants.size).isEqualTo(1)
+    assertThat(foundRoom2.participants).noneMatch({ it.id == participantId1 })
+    assertThat(foundRoom2.participants).anyMatch({ it.id == participantId2 })
+  }
+
   @AfterEach
   fun tearDown() {
-    participantKafkaConsumer.poll(Duration.ofSeconds(3))
-    roomKafkaConsumer.poll(Duration.ofSeconds(3))
+    // 의심 1 : consumer이 factory가 아니여서 그런듯?
+//    roomKafkaConsumer.poll(Duration.ofSeconds(3))
+//    participantKafkaConsumer.poll(Duration.ofSeconds(3))
   }
 
   private fun getNextRoomAvro(): RoomAvro {

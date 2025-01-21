@@ -10,7 +10,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.test.EmbeddedKafkaBroker
-import org.springframework.kafka.test.context.EmbeddedKafka
 import vottega.room_service.adaptor.RoomProducer
 import vottega.room_service.adaptor.impl.RoomProducerImpl
 import vottega.room_service.avro.ParticipantAvro
@@ -20,10 +19,6 @@ import vottega.room_service.repository.RoomRepository
 import vottega.room_service.service.RoomService
 
 @TestConfiguration
-@EmbeddedKafka(
-  partitions = 1,
-  topics = ["room", "participant"]
-)
 class TestConfig {
   @Autowired
   private lateinit var embeddedKafka: EmbeddedKafkaBroker

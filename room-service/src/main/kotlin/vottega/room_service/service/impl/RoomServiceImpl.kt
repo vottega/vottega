@@ -67,8 +67,10 @@ class RoomServiceImpl(
 
   @PreAuthorize("@roomSecurity.isOwner(authentication.principal, authentication.credentials)")
   override fun removeParticipant(roomId: Long, participantId: UUID): RoomResponseDTO {
+    //TODO 방장은 못지우게
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.apply { removeParticipant(participantId) }
+    roomRepository.save(room)
     return roomMapper.toRoomOutDTO(room)
   }
 
