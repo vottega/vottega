@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.kafka.test.context.EmbeddedKafka
+import vottega.room_service.avro.Action
 import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
@@ -287,6 +288,7 @@ class RoomServiceImplTest {
     val participant1 = ParticipantInfoDTO("민균", null, "회장", "voter")
     val participant2 = ParticipantInfoDTO("성윤", null, "따까리", "viewer")
     roomService.addParticipant(roomResponseDTO.id, listOf(participant1, participant2))
+    participantKafkaConsumer.poll(Duration.ofSeconds(3))
 
     //when
     val foundRoom = roomService.getRoom(roomResponseDTO.id)
@@ -295,11 +297,44 @@ class RoomServiceImplTest {
     roomService.removeParticipant(roomResponseDTO.id, participantId1)
     entityManager.flush()
 
-    //then// null은 잘되는데 필터가 안된다 ㅅㅂ
+    //then
     val foundRoom2 = roomService.getRoom(roomResponseDTO.id)
     assertThat(foundRoom2.participants.size).isEqualTo(1)
     assertThat(foundRoom2.participants).noneMatch({ it.id == participantId1 })
     assertThat(foundRoom2.participants).anyMatch({ it.id == participantId2 })
+    val record = participantKafkaConsumer.poll(Duration.ofSeconds(3))
+    assertThat(record.count()).isEqualTo(1)
+    val deletedParticipant = record.iterator().next().value()
+    assertThat(deletedParticipant.id).isEqualTo(participantId1)
+    assertThat(deletedParticipant.name).isEqualTo("민균")
+    assertThat(deletedParticipant.action).isEqualTo(Action.DELETE)
+  }
+
+
+  @Test
+  @DisplayName("Role Add and Delete")
+  fun roleAddDeleteTest() {
+    //given
+    val roomName = "testRoom"
+    val ownerId = 1L
+    val participantRoleDTO1 = ParticipantRoleDTO("voter", true)
+    val participantRoleDTO2 = ParticipantRoleDTO("viewer", false)
+    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf(participantRoleDTO1, participantRoleDTO2))
+
+    //when
+    val newRole = ParticipantRoleDTO("newRole", true)
+    roomService.addRole(roomResponseDTO.id, newRole)
+
+    //then
+    val foundRoom = roomService.getRoom(roomResponseDTO.id)
+    assertThat(foundRoom.roles.size).isEqualTo(3)
+    assertThat(foundRoom.roles).anyMatch({ it.role == newRole.role && it.canVote })
+
+    roomService.deleteRole(roomResponseDTO.id, newRole.role)
+    val foundRoom2 = roomService.getRoom(roomResponseDTO.id)
+    assertThat(foundRoom2.roles.size).isEqualTo(2)
+    assertThat(foundRoom2.roles).noneMatch({ it.role == newRole.role })
+    
   }
 
   @AfterEach
