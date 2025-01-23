@@ -24,7 +24,8 @@ class RoomMapper(
       createdAt = room.createdAt ?: throw IllegalStateException("createdAt is null"),
       lastUpdatedAt = room.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null"),
       startedAt = room.startedAt,
-      finishedAt = room.finishedAt
+      finishedAt = room.finishedAt,
+      roles = room.participantRoleList.map { participantRoleMapper.toParticipantRoleDTO(it) }
     )
   }
 
@@ -35,7 +36,7 @@ class RoomMapper(
       .setOwnerId(roomResponseDTO.ownerId)
       .setStatus(roomStatusToStatus(roomResponseDTO.status))
       .setParticipantRoleList(
-        roomResponseDTO.participants.map { participantRoleMapper.toParticipantRoleAvro(it.participantRole) }
+        roomResponseDTO.roles.map { participantRoleMapper.toParticipantRoleAvro(it) }
       )
       .setCreatedAt(roomResponseDTO.createdAt.toInstant(ZoneOffset.UTC))
       .setLastUpdatedAt(roomResponseDTO.lastUpdatedAt.toInstant(ZoneOffset.UTC))

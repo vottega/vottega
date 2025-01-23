@@ -9,6 +9,7 @@ data class RoomResponseDTO(
   val ownerId: Long,
   val status: RoomStatus,
   val participants: List<ParticipantResponseDTO>,
+  val roles: List<ParticipantRoleDTO>,
   val createdAt: LocalDateTime,
   val lastUpdatedAt: LocalDateTime,
   val startedAt: LocalDateTime?,
