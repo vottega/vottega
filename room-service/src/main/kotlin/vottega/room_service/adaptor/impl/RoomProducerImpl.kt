@@ -4,6 +4,7 @@ import main.room_service.avro.RoomAvro
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 import vottega.room_service.adaptor.RoomProducer
+import vottega.room_service.avro.Action
 import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.dto.ParticipantResponseDTO
 import vottega.room_service.dto.RoomResponseDTO
@@ -22,8 +23,8 @@ class RoomProducerImpl(
     roomKafkaTemplate.send("room", roomOutAvro.id, roomOutAvro)
   }
 
-  override fun participantEditMessageProduce(participantResponseDTO: ParticipantResponseDTO) {
-    val participantAvro = participantMapper.toParticipantAvro(participantResponseDTO)
+  override fun participantEditMessageProduce(participantResponseDTO: ParticipantResponseDTO, action: Action) {
+    val participantAvro = participantMapper.toParticipantAvro(participantResponseDTO, action)
     participantKafkaTemplate.send("participant", participantAvro.roomId, participantAvro)
   }
 }

@@ -34,7 +34,9 @@
         "symbols": [
           "ENTER",
           "EXIT",
-          "EDIT"
+          "EDIT",
+          "ADD",
+          "DELETE"
         ]
       }
     },

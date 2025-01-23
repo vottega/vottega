@@ -25,7 +25,7 @@ class ParticipantMapper(
     )
   }
 
-  fun toParticipantAvro(participantResponseDTO: ParticipantResponseDTO): ParticipantAvro {
+  fun toParticipantAvro(participantResponseDTO: ParticipantResponseDTO, action: Action): ParticipantAvro {
     return ParticipantAvro.newBuilder()
       .setId(participantResponseDTO.id)
       .setName(participantResponseDTO.name)
@@ -36,7 +36,7 @@ class ParticipantMapper(
       .setCreatedAt(participantResponseDTO.createdAt.toInstant(ZoneOffset.UTC))
       .setEnteredAt(participantResponseDTO.enteredAt?.toInstant(ZoneOffset.UTC))
       .setLastUpdatedAt(participantResponseDTO.lastUpdatedAt.toInstant(ZoneOffset.UTC))
-      .setAction(Action.EDIT)
+      .setAction(action)
       .build()
   }
 }

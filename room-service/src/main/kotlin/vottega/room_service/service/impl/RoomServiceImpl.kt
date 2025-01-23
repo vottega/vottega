@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import vottega.room_service.adaptor.RoomProducer
+import vottega.room_service.avro.Action
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
@@ -58,7 +59,7 @@ class RoomServiceImpl(
     roomRepository.save(room)
     participantInfoDTOS.forEach { participantInfoDTO ->
       room.participantList.find { participantInfoDTO.name == it.name }?.let { participant ->
-        roomProducer.participantEditMessageProduce(participantMapper.toParticipantResponseDTO(participant))
+        roomProducer.participantEditMessageProduce(participantMapper.toParticipantResponseDTO(participant), Action.ADD)
       }
     }
     return roomMapper.toRoomOutDTO(room)
@@ -69,8 +70,12 @@ class RoomServiceImpl(
   override fun removeParticipant(roomId: Long, participantId: UUID): RoomResponseDTO {
     //TODO 방장은 못지우게
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
-    room.apply { removeParticipant(participantId) }
+    val removedParticipant = room.removeParticipant(participantId)
     roomRepository.save(room)
+    roomProducer.participantEditMessageProduce(
+      participantMapper.toParticipantResponseDTO(removedParticipant),
+      Action.DELETE
+    )
     return roomMapper.toRoomOutDTO(room)
   }
 
@@ -84,7 +89,7 @@ class RoomServiceImpl(
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     val updatedParticipant = room.updateParticipant(participantId, participantInfoDTO)
     val participantDTO = participantMapper.toParticipantResponseDTO(updatedParticipant)
-    roomProducer.participantEditMessageProduce(participantDTO)
+    roomProducer.participantEditMessageProduce(participantDTO, Action.EDIT)
     return roomMapper.toRoomOutDTO(room)
   }
 
