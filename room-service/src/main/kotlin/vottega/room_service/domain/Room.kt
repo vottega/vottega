@@ -84,13 +84,14 @@ class Room(
   }
 
 
-  fun removeParticipant(uuid: UUID) {
+  fun removeParticipant(uuid: UUID): Participant {
     val participant = this.participantList.find { it.id == uuid }
     if (participant == null) {
       throw ParticipantNotFoundException(uuid)
     }
     participant.remove()
     this.participantList.remove(participant)
+    return participant
   }
 
   fun updateParticipant(uuid: UUID, participantInfoDTO: ParticipantInfoDTO): Participant {
