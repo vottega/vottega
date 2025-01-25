@@ -1,5 +1,14 @@
 package vottega.gateway.client
 
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
+import reactivefeign.spring.config.ReactiveFeignClient
+import reactor.core.publisher.Mono
+import vottega.gateway.dto.AuthResponse
 
-class AuthReactiveFeignClient {
+@ReactiveFeignClient(name = "auth-service", url = "\${auth.service.url}")
+interface AuthReactiveFeignClient {
+
+  @PostMapping("/api/auth/validate")
+  fun validateToken(@RequestParam token: String): Mono<AuthResponse>
 }
