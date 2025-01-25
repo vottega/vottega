@@ -22,16 +22,18 @@ repositories {
 extra["springCloudVersion"] = "2024.0.0-RC1"
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springframework.cloud:spring-cloud-starter-gateway")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
+	implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
+	implementation("com.playtika.reactivefeign:feign-reactor-webclient:4.2.1")
 }
 
 dependencyManagement {
