@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: spring-gateway
+service:
+  room: http://localhost:8081
+  user: http://localhost:8082
+  vote: http://localhost:8083
+  auth: http://localhost:8084
