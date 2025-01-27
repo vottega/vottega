@@ -148,10 +148,8 @@ class JwtUtil {
 
 
     // 공개 키 반환
-    fun getPublicKey(): Mono<String> {
-        return Mono.fromCallable {
-            Base64.getEncoder().encodeToString(keyPair.public.encoded)
-        }
+    fun getPublicKey(): String {
+        return Base64.getEncoder().encodeToString(keyPair.public.encoded);
     }
 
 

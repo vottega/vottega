@@ -98,7 +98,7 @@ class JwtUtilTest {
 
  @Test
  fun `getPublicKey should return valid public key`() {
-  val publicKey = jwtUtil.getPublicKey().block()
+  val publicKey = jwtUtil.getPublicKey()
   assertNotNull(publicKey)
   println("Public Key: $publicKey")
  }

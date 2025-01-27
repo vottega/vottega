@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.PathVariable
 import reactor.core.publisher.Mono
 import java.util.*
 
-//@FeignClient(name = "room-service", url = "http://localhost:8082", configuration = [FeignWebFluxConfig::class])
-//interface RoomClient {
-//    @GetMapping("/users/{id}")
-//    fun getUserById(@PathVariable("id") id: UUID): Mono<UserResponse>
-//}
-//
-//data class UserResponse(
-//    val id: UUID,
-//    val roomId : Long,
-//)
+
+@FeignClient(name = "room-service", url = "http://localhost:8082")
+interface RoomClient {
+    @GetMapping("/users/{id}")
+    fun getUserById(@PathVariable("id") id: UUID): Mono<UserResponse>
+}
+
+data class UserResponse(
+    val id: UUID,
+    val roomId : Long,
+)
