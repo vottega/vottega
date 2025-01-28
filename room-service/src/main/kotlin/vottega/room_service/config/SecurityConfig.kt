@@ -9,7 +9,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.security.web.util.matcher.OrRequestMatcher
 import vottega.room_service.filter.CustomHeaderAuthenticationFilter
 
 @Configuration
@@ -20,14 +19,11 @@ class SecurityConfig {
   @Order(1)
   fun webSecurityCustomizer(http: HttpSecurity): SecurityFilterChain {
 
-    val multipleMatchers = OrRequestMatcher(
-      AntPathRequestMatcher("/v3/api-docs/**"),
-      AntPathRequestMatcher("/swagger-ui/**"),
-      AntPathRequestMatcher("/api")
-    )
     http
       // 이 체인은 /api/** 로 들어오는 요청만 매칭
-      .securityMatcher(multipleMatchers)
+      .securityMatcher(
+        AntPathRequestMatcher("/**")
+      )
       .csrf { it.disable() }
       .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
       .authorizeHttpRequests {
