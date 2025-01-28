@@ -1,7 +1,11 @@
 package vottega.room_service.service.impl
 
+import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient
+import io.confluent.kafka.serializers.KafkaAvroSerializer
 import main.room_service.avro.RoomAvro
 import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.serialization.LongSerializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -9,6 +13,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.test.EmbeddedKafkaBroker
 import vottega.room_service.adaptor.RoomProducer
 import vottega.room_service.adaptor.impl.RoomProducerImpl
@@ -31,6 +36,9 @@ class TestConfig {
 
   @Autowired
   private lateinit var roomRepository: RoomRepository
+
+  @Bean
+  fun mockSchemaRegistryClient(): MockSchemaRegistryClient = MockSchemaRegistryClient()
 
 
   @Bean
@@ -56,14 +64,28 @@ class TestConfig {
     return getKafkaConsumer<ParticipantAvro>("participant")
   }
 
-  private fun <T> getKafkaTemplate(): KafkaTemplate<Long, T> {
+
+  @Suppress("UNCHECKED_CAST")
+  private fun <T> getKafkaTemplate(
+    mockSchemaRegistryClient: MockSchemaRegistryClient
+  ): KafkaTemplate<Long, T> {
     val producerProps = mutableMapOf<String, Any>(
-      "bootstrap.servers" to embeddedKafka.brokersAsString,
-      "key.serializer" to org.apache.kafka.common.serialization.LongSerializer::class.java,
-      "value.serializer" to io.confluent.kafka.serializers.KafkaAvroSerializer::class.java,
-      "schema.registry.url" to "mock://embedded-schema-registry"
+      ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to embeddedKafka.brokersAsString,
+      // 여기서는 실제 서버가 아니라 "mock" URL이라고 명시하지만, 로컬에선 MockSchemaRegistryClient가 해결
+      "schema.registry.url" to "mock://embedded-schema-registry",
+      ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to LongSerializer::class.java.name,
+      ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java.name,
+      // 추가로 필요할 수 있는 설정들
     )
-    val producerFactory = DefaultKafkaProducerFactory<Long, T>(producerProps)
+
+    // Serializer에 직접 MockSchemaRegistryClient를 주입
+    val keySerializer = LongSerializer()
+    val valueSerializer = KafkaAvroSerializer(mockSchemaRegistryClient)
+
+    // 위 설정으로 ProducerFactory 생성
+    val producerFactory: ProducerFactory<Long, T> =
+      DefaultKafkaProducerFactory(producerProps, keySerializer, valueSerializer)
+
     return KafkaTemplate(producerFactory)
   }
 
@@ -91,5 +113,11 @@ class TestConfig {
       roomMapper = roomMapper,
       participantMapper = participantMapper
     )
+  }
+
+  @Bean
+  @Primary
+  fun getEmbeddedKafkaBroker(): EmbeddedKafkaBroker {
+    return embeddedKafka
   }
 }

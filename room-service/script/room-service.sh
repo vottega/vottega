@@ -20,12 +20,12 @@ if [ "$TARGET" == "local" ]; then
     if [ "$ACTION" == "init" ]; then
         echo "Starting Kafka and Database services..."
         docker-compose -f kafka-docker-compose.yml up -d
-        docker-compose -f database-docker-compose.yml up -d
+        docker-compose -f docker-compose.yml up -d
         echo "Services started successfully."
     elif [ "$ACTION" == "exit" ]; then
         echo "Stopping Kafka and Database services..."
         docker-compose -f kafka-docker-compose.yml down
-        docker-compose -f database-docker-compose.yml down
+        docker-compose -f docker-compose.yml down
         echo "Services stopped successfully."
     else
         usage

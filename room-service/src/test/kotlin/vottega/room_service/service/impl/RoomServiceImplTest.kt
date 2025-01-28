@@ -14,7 +14,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
+import org.springframework.test.context.ActiveProfiles
 import vottega.room_service.avro.Action
 import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.domain.enumeration.RoomStatus
@@ -32,6 +34,7 @@ import java.time.Duration
   topics = ["room", "participant"]
 )
 @SpringBootTest
+@ActiveProfiles("test")
 @Import(TestConfig::class)
 @Execution(ExecutionMode.SAME_THREAD)
 class RoomServiceImplTest {
@@ -54,6 +57,9 @@ class RoomServiceImplTest {
   @Autowired
   private lateinit var entityManager: EntityManager
 
+  @Autowired
+  private lateinit var embeddedKafkaBroker: EmbeddedKafkaBroker
+  
 
   @Test
   @DisplayName("방을 생성 후 확인 테스트")
@@ -334,14 +340,7 @@ class RoomServiceImplTest {
     val foundRoom2 = roomService.getRoom(roomResponseDTO.id)
     assertThat(foundRoom2.roles.size).isEqualTo(2)
     assertThat(foundRoom2.roles).noneMatch({ it.role == newRole.role })
-    
-  }
 
-  @AfterEach
-  fun tearDown() {
-    // 의심 1 : consumer이 factory가 아니여서 그런듯?
-//    roomKafkaConsumer.poll(Duration.ofSeconds(3))
-//    participantKafkaConsumer.poll(Duration.ofSeconds(3))
   }
 
   private fun getNextRoomAvro(): RoomAvro {
