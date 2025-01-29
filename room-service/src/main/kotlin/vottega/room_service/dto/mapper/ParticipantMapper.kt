@@ -5,7 +5,7 @@ import vottega.room_service.avro.Action
 import vottega.room_service.avro.ParticipantAvro
 import vottega.room_service.domain.Participant
 import vottega.room_service.dto.ParticipantResponseDTO
-import java.time.ZoneOffset
+import java.time.ZoneId
 
 @Component
 class ParticipantMapper(
@@ -33,9 +33,9 @@ class ParticipantMapper(
       .setPosition(participantResponseDTO.position)
       .setRole(participantRoleMapper.toParticipantRoleAvro(participantResponseDTO.participantRole))
       .setIsEntered(participantResponseDTO.isEntered)
-      .setCreatedAt(participantResponseDTO.createdAt.toInstant(ZoneOffset.UTC))
-      .setEnteredAt(participantResponseDTO.enteredAt?.toInstant(ZoneOffset.UTC))
-      .setLastUpdatedAt(participantResponseDTO.lastUpdatedAt.toInstant(ZoneOffset.UTC))
+      .setCreatedAt(participantResponseDTO.createdAt.atZone(ZoneId.systemDefault()).toInstant())
+      .setEnteredAt(participantResponseDTO.enteredAt?.atZone(ZoneId.systemDefault())?.toInstant())
+      .setLastUpdatedAt(participantResponseDTO.lastUpdatedAt.atZone(ZoneId.systemDefault()).toInstant())
       .setAction(action)
       .build()
   }

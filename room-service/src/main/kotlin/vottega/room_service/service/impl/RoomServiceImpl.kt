@@ -26,7 +26,7 @@ class RoomServiceImpl(
   private val participantMapper: ParticipantMapper
 ) : RoomService {
 
-  @PreAuthorize("hasRole('USER')")
+  @PreAuthorize("hasRole('USER')") //  todo 이게 userid가 ownerid랑 같은지 확인해야함
   override fun createRoom(
     roomName: String,
     ownerId: Long,
