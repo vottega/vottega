@@ -4,6 +4,7 @@ import feign.FeignException
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.cloud.gateway.filter.GlobalFilter
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils
+import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -17,7 +18,7 @@ import java.net.URI
 
 @Component
 class JwtParsingFilter(
-  private val authReactiveFeignClient: AuthReactiveFeignClient,
+  @Lazy private val authReactiveFeignClient: AuthReactiveFeignClient,
   private val serviceUrlProperties: ServiceUrlProperties
 ) : GlobalFilter {
   override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {

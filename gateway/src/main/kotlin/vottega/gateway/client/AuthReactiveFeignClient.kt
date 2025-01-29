@@ -6,7 +6,7 @@ import reactivefeign.spring.config.ReactiveFeignClient
 import reactor.core.publisher.Mono
 import vottega.gateway.dto.AuthResponse
 
-@ReactiveFeignClient(name = "auth-service", url = "\${auth.service.url}")
+@ReactiveFeignClient(name = "auth-service")
 interface AuthReactiveFeignClient {
 
   @PostMapping("/api/auth/validate")
