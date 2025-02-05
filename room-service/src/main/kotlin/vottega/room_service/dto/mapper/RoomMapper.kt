@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.RoomResponseDTO
-import java.time.ZoneOffset
+import java.time.ZoneId
 
 @Component
 class RoomMapper(
@@ -38,10 +38,10 @@ class RoomMapper(
       .setParticipantRoleList(
         roomResponseDTO.roles.map { participantRoleMapper.toParticipantRoleAvro(it) }
       )
-      .setCreatedAt(roomResponseDTO.createdAt.toInstant(ZoneOffset.UTC))
-      .setLastUpdatedAt(roomResponseDTO.lastUpdatedAt.toInstant(ZoneOffset.UTC))
-      .setStartedAt(roomResponseDTO.startedAt?.toInstant(ZoneOffset.UTC))
-      .setFinishedAt(roomResponseDTO.finishedAt?.toInstant(ZoneOffset.UTC))
+      .setCreatedAt(roomResponseDTO.createdAt.atZone(ZoneId.systemDefault()).toInstant())
+      .setLastUpdatedAt(roomResponseDTO.lastUpdatedAt.atZone(ZoneId.systemDefault()).toInstant())
+      .setStartedAt(roomResponseDTO.startedAt?.atZone(ZoneId.systemDefault())?.toInstant())
+      .setFinishedAt(roomResponseDTO.finishedAt?.atZone(ZoneId.systemDefault())?.toInstant())
       .build()
   }
 
