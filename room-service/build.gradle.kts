@@ -46,7 +46,6 @@ dependencies {
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
-  testImplementation("org.springframework.security:spring-security-test")
   compileOnly("org.projectlombok:lombok")
   runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
   annotationProcessor("org.projectlombok:lombok")
