@@ -16,7 +16,7 @@ services:
       MARIADB_USER: minguni
       MARIADB_PASSWORD: minguni
     ports:
-      - "3307:3306"
+      - "3306:3306"
     networks:
       - vottega-network
 
