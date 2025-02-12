@@ -2,6 +2,7 @@ package vottega.room_service.web
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import vottega.room_service.dto.ParticipantInfoDTO
 import vottega.room_service.dto.RoomResponseDTO
@@ -16,6 +17,7 @@ class ParticipantResource(
 ) {
   @PutMapping("/{roomId}/participants")
   @Operation(summary = "참가자 추가", description = "방에 참가자를 추가합니다.")
+  @ResponseStatus(HttpStatus.CREATED)
   fun addParticipants(
     @PathVariable roomId: Long,
     @RequestBody ParticipantInfoDTOList: List<ParticipantInfoDTO>

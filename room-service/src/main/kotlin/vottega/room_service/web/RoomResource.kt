@@ -2,6 +2,7 @@ package vottega.room_service.web
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import vottega.room_service.dto.CreateRoomRequestDTO
 import vottega.room_service.dto.ParticipantRoleDTO
@@ -17,6 +18,7 @@ class RoomResource(
 ) {
   @PostMapping
   @Operation(summary = "방 생성", description = "방을 생성합니다.")
+  @ResponseStatus(HttpStatus.CREATED)
   fun createRoom(@RequestBody createRoomRequestDTO: CreateRoomRequestDTO): RoomResponseDTO =
     roomService.createRoom(
       createRoomRequestDTO.roomName,
@@ -36,6 +38,7 @@ class RoomResource(
 
   @PutMapping("/{roomId}/role")
   @Operation(summary = "역할 추가", description = "방에 역할을 추가합니다.")
+  @ResponseStatus(HttpStatus.CREATED)
   fun putRole(@PathVariable roomId: Long, @RequestBody roleInfo: ParticipantRoleDTO): RoomResponseDTO =
     roomService.addRole(roomId, roleInfo)
 
