@@ -46,6 +46,7 @@ dependencies {
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
   compileOnly("org.projectlombok:lombok")
   runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
   annotationProcessor("org.projectlombok:lombok")
