@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "ParticipantRoleAvro",
+  "namespace": "vottega.sse_server.avro",
+  "fields": [
+    {
+      "name": "role",
+      "type": "string"
+    },
+    {
+      "name": "canVote",
+      "type": "boolean"
+    }
+  ]
+}
