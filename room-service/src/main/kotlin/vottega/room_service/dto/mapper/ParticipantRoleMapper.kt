@@ -1,7 +1,7 @@
 package vottega.room_service.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.room_service.avro.ParticipantRoleAvro
+import vottega.avro.ParticipantRoleAvro
 import vottega.room_service.domain.ParticipantRole
 import vottega.room_service.dto.ParticipantRoleDTO
 

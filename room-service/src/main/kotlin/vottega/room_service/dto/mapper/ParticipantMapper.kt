@@ -1,8 +1,8 @@
 package vottega.room_service.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.room_service.avro.Action
-import vottega.room_service.avro.ParticipantAvro
+import vottega.avro.Action
+import vottega.avro.ParticipantAvro
 import vottega.room_service.domain.Participant
 import vottega.room_service.dto.ParticipantResponseDTO
 import java.time.ZoneId

@@ -2,8 +2,8 @@ package vottega.room_service.adaptor
 
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
-import vottega.room_service.avro.Action
-import vottega.room_service.avro.ParticipantAvro
+import vottega.avro.Action
+import vottega.avro.ParticipantAvro
 import vottega.room_service.service.RoomService
 
 @Component

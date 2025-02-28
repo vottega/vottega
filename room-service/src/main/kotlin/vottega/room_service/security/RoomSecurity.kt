@@ -7,10 +7,9 @@ import java.util.*
 
 @Component
 class RoomSecurity(private val roomRepository: RoomRepository) {
-  fun isParticipantInRoomAndCanVote(roomId: Long, participantId: UUID, canVote: Boolean?): Boolean {
+  fun isParticipantInRoom(roomId: Long, participantId: UUID): Boolean {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
-    val participant = room.participantList.find { it.id == participantId } ?: return false
-    return canVote?.let { participant.participantRole.canVote == it } ?: true
+    return room.participantList.any { it.id == participantId }
   }
 
   fun isOwner(roomId: Long, ownerId: Long): Boolean {

@@ -1,10 +1,10 @@
 package vottega.room_service.adaptor
 
-import main.room_service.avro.RoomAvro
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
-import vottega.room_service.avro.Action
-import vottega.room_service.avro.ParticipantAvro
+import vottega.avro.Action
+import vottega.avro.ParticipantAvro
+import vottega.avro.RoomAvro
 import vottega.room_service.dto.ParticipantResponseDTO
 import vottega.room_service.dto.RoomResponseDTO
 import vottega.room_service.dto.mapper.ParticipantMapper

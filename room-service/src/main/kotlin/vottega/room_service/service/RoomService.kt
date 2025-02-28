@@ -1,10 +1,10 @@
-package vottega.room_service.service.impl
+package vottega.room_service.service
 
 import jakarta.transaction.Transactional
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
+import vottega.avro.Action
 import vottega.room_service.adaptor.RoomProducer
-import vottega.room_service.avro.Action
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO

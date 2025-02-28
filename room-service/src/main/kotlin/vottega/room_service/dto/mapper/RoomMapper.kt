@@ -1,8 +1,8 @@
 package vottega.room_service.dto.mapper
 
-import main.room_service.avro.RoomAvro
-import main.room_service.avro.Status
 import org.springframework.stereotype.Component
+import vottega.avro.RoomAvro
+import vottega.avro.Status
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.RoomResponseDTO
