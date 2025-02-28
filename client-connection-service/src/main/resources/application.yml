@@ -1,8 +1,10 @@
 spring:
+  application:
+    name: vote-service
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: room-local-consumer
+      group-id: sse-server
       key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     producer:
@@ -11,8 +13,18 @@ spring:
     properties:
       schema.registry.url: http://localhost:8081
       auto.register.schemas: true
-  profiles:
-    active: local
 springdoc:
   swagger-ui:
     path: /api
+room:
+  service:
+    url: http://localhost:8080
+server:
+  port: 8084
+#
+#server:
+#  port: 8081
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
