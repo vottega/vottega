@@ -29,7 +29,11 @@ class KafkaCommonConfig(
       ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
       ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to LongSerializer::class.java.name,
       ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to "io.confluent.kafka.serializers.KafkaAvroSerializer",
-      "schema.registry.url" to schemaRegistryUrl
+      "schema.registry.url" to schemaRegistryUrl,
+      ProducerConfig.ACKS_CONFIG to "all",
+      ProducerConfig.RETRIES_CONFIG to 3,
+      ProducerConfig.RETRY_BACKOFF_MS_CONFIG to 100,
+      ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG to true
     )
   }
 }
