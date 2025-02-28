@@ -1,7 +1,7 @@
 package vottega.sse_server.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.sse_server.avro.ParticipantRoleAvro
+import vottega.avro.ParticipantRoleAvro
 import vottega.sse_server.dto.ParticipantRoleDTO
 
 @Component

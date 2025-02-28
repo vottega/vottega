@@ -1,6 +1,6 @@
 package vottega.sse_server.dto
 
-import vottega.vote_service.domain.enum.VotePaperType
+import vottega.sse_server.dto.mapper.VotePaperType
 import java.time.LocalDateTime
 import java.util.*
 

@@ -1,8 +1,7 @@
 package vottega.sse_server.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.sse_server.avro.RoomAvro
-import vottega.sse_server.avro.Status
+import vottega.avro.RoomAvro
 import vottega.sse_server.dto.RoomResponseDTO
 import java.time.ZoneId
 
@@ -24,12 +23,12 @@ class RoomMapper(
     )
   }
 
-  private fun statusToRoomStatus(status: Status): RoomStatus {
+  private fun statusToRoomStatus(status: vottega.avro.Status): RoomStatus {
     return when (status) {
-      Status.NOT_STARTED -> RoomStatus.NOT_STARTED
-      Status.STOPPED -> RoomStatus.STOPPED
-      Status.PROGRESS -> RoomStatus.PROGRESS
-      Status.FINISHED -> RoomStatus.FINISHED
+      vottega.avro.Status.NOT_STARTED -> RoomStatus.NOT_STARTED
+      vottega.avro.Status.STOPPED -> RoomStatus.STOPPED
+      vottega.avro.Status.PROGRESS -> RoomStatus.PROGRESS
+      vottega.avro.Status.FINISHED -> RoomStatus.FINISHED
     }
   }
 }

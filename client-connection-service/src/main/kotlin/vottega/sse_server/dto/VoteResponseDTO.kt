@@ -1,6 +1,6 @@
 package vottega.sse_server.dto
 
-import vottega.sse_server.avro.VoteAction
+import vottega.avro.VoteAction
 import vottega.sse_server.dto.mapper.Status
 import vottega.sse_server.dto.mapper.VoteResult
 import java.time.LocalDateTime

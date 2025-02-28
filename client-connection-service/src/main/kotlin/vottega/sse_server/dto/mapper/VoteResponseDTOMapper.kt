@@ -1,9 +1,8 @@
 package vottega.sse_server.dto.mapper
 
 import org.springframework.stereotype.Service
-import vottega.sse_server.avro.Result
-import vottega.sse_server.avro.VoteAvro
-import vottega.sse_server.avro.VoteStatus
+import vottega.avro.VoteAvro
+import vottega.avro.VoteStatus
 import vottega.sse_server.dto.VoteResponseDTO
 import java.time.ZoneId
 
@@ -43,11 +42,11 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
     }
   }
 
-  fun voteResultToVoteResult(result: Result): VoteResult {
+  fun voteResultToVoteResult(result: vottega.avro.Result): VoteResult {
     return when (result) {
-      Result.PASSED -> VoteResult.PASSED
-      Result.NOT_DECIDED -> VoteResult.NOT_DECIDED
-      Result.REJECTED -> VoteResult.REJECTED
+      vottega.avro.Result.PASSED -> VoteResult.PASSED
+      vottega.avro.Result.NOT_DECIDED -> VoteResult.NOT_DECIDED
+      vottega.avro.Result.REJECTED -> VoteResult.REJECTED
     }
   }
 }

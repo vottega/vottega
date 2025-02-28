@@ -3,10 +3,10 @@ package vottega.sse_server.adapt
 import org.springframework.stereotype.Component
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
-import vottega.sse_server.avro.ParticipantAvro
-import vottega.sse_server.avro.RoomAvro
-import vottega.sse_server.avro.VoteAvro
-import vottega.sse_server.avro.VotePaperAvro
+import vottega.avro.ParticipantAvro
+import vottega.avro.RoomAvro
+import vottega.avro.VoteAvro
+import vottega.avro.VotePaperAvro
 import vottega.sse_server.config.KafkaCommonConfig
 import vottega.sse_server.dto.RoomEvent
 import vottega.sse_server.dto.RoomEventType

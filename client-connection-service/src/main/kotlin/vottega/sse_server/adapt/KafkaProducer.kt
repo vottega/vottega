@@ -6,8 +6,8 @@ import reactor.core.publisher.Mono
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderOptions
 import reactor.kafka.sender.SenderRecord
-import vottega.sse_server.avro.Action
-import vottega.sse_server.avro.ParticipantAvro
+import vottega.avro.Action
+import vottega.avro.ParticipantAvro
 import vottega.sse_server.config.KafkaCommonConfig
 import vottega.sse_server.dto.mapper.ParticipantMapper
 import java.util.*
@@ -26,7 +26,7 @@ class KafkaProducer(
   }
 
   fun participantProducer(roomId: Long, userId: UUID, roomAction: Action): Mono<Boolean> {
-    val value = participantMapper.toParticipantAvro(roomId, userId, Action.EXIT)
+    val value = participantMapper.toParticipantAvro(roomId, userId, roomAction)
     val senderRecord = SenderRecord.create(
       "participant", //TODO 다른 곳에서 공통으로 토픽 이름 관리하기
       null,

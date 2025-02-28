@@ -1,8 +1,8 @@
 package vottega.sse_server.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.sse_server.avro.Action
-import vottega.sse_server.avro.ParticipantAvro
+import vottega.avro.Action
+import vottega.avro.ParticipantAvro
 import vottega.sse_server.dto.ParticipantResponseDTO
 import java.time.LocalDateTime
 import java.time.ZoneId

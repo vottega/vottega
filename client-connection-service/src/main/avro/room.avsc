@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "RoomAvro",
-  "namespace": "vottega.sse_server.avro",
+  "namespace": "vottega.avro",
   "fields": [
     {
       "name": "id",
@@ -15,7 +15,7 @@
       "name": "participantRoleList",
       "type": {
         "type": "array",
-        "items": "vottega.sse_server.avro.ParticipantRoleAvro"
+        "items": "vottega.avro.ParticipantRoleAvro"
       }
     },
     {

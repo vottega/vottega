@@ -1,7 +1,7 @@
 package vottega.sse_server.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.sse_server.avro.VotePaperAvro
+import vottega.avro.VotePaperAvro
 import vottega.sse_server.dto.VotePaperDTO
 import java.time.ZoneId
 
@@ -21,12 +21,12 @@ class VotePaperMapper {
     )
   }
 
-  fun avroEnumToVotePaperType(votePaperType: vottega.sse_server.avro.VotePaperType): VotePaperType {
+  fun avroEnumToVotePaperType(votePaperType: vottega.avro.VotePaperType): VotePaperType {
     return when (votePaperType) {
-      vottega.sse_server.avro.VotePaperType.YES -> VotePaperType.YES
-      vottega.sse_server.avro.VotePaperType.NO -> VotePaperType.NO
-      vottega.sse_server.avro.VotePaperType.ABSTAIN -> VotePaperType.ABSTAIN
-      vottega.sse_server.avro.VotePaperType.NOT_VOTED -> VotePaperType.NOT_VOTED
+      vottega.avro.VotePaperType.YES -> VotePaperType.YES
+      vottega.avro.VotePaperType.NO -> VotePaperType.NO
+      vottega.avro.VotePaperType.ABSTAIN -> VotePaperType.ABSTAIN
+      vottega.avro.VotePaperType.NOT_VOTED -> VotePaperType.NOT_VOTED
     }
   }
 }

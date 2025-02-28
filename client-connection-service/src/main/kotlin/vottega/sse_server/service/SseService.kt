@@ -3,8 +3,8 @@ package vottega.sse_server.service
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import vottega.avro.Action
 import vottega.sse_server.adapt.KafkaProducer
-import vottega.sse_server.avro.Action
 import vottega.sse_server.dto.RoomEvent
 import vottega.sse_server.repository.RoomParticipantRepository
 import vottega.sse_server.repository.SinkRepository
@@ -20,7 +20,7 @@ class SseService(
   fun enterRoom(roomId: Long, userId: UUID): Flux<RoomEvent> {
     val addUserMono = roomParticipantRepository.addParticipant(roomId, userId)
     val sinkMono = Mono.fromSupplier { sinkRepository.getRoomSink(roomId) }
-    val kafkaMono = kafkaProducer.participantProducer(roomId, userId, Action.EXIT)
+    val kafkaMono = kafkaProducer.participantProducer(roomId, userId, Action.ENTER)
 
     return Mono.zip(addUserMono, sinkMono, kafkaMono)
       .flatMapMany { tuple ->
