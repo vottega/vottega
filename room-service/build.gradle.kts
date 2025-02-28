@@ -46,7 +46,7 @@ dependencies {
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+//  implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
   compileOnly("org.projectlombok:lombok")
   runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
   annotationProcessor("org.projectlombok:lombok")
@@ -66,6 +66,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
 
   implementation("com.h2database:h2")
+  runtimeOnly("org.springframework.boot:spring-boot-docker-compose") // todo 이걸로 도커 자동 실행
 }
 
 kotlin {
