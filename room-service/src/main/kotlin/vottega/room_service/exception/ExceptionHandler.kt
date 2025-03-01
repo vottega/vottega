@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 class ExceptionHandler {
   @ExceptionHandler(RoomNotFoundException::class, RoleNotFoundException::class, ParticipantNotFoundException::class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  fun handleResourceNotFoundException(e: RoomNotFoundException) = e.message
+  fun handleResourceNotFoundException(e: Exception) = e.message
 
   @ExceptionHandler(
     RoomStatusConflictException::class,
@@ -18,5 +18,5 @@ class ExceptionHandler {
     DuplicateKeyException::class
   )
   @ResponseStatus(HttpStatus.CONFLICT)
-  fun handleRoomStatusConflictException(e: RoomStatusConflictException) = e.message
+  fun handleRoomStatusConflictException(e: Exception) = e.message
 }
