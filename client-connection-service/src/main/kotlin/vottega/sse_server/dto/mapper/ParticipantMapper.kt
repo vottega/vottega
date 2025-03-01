@@ -19,11 +19,12 @@ class ParticipantMapper(
       name = participant.name,
       roomId = participant.roomId,
       position = participant.position,
-      participantRole = participantRoleMapper.toParticipantRoleDTO(participant.role),
+      participantRole = participant.role?.let { participantRoleMapper.toParticipantRoleDTO(it) },
       isEntered = participant.isEntered,
       createdAt = participant.createdAt.atZone(ZoneId.systemDefault()).toLocalDateTime(),
-      enteredAt = participant.enteredAt.atZone(ZoneId.systemDefault()).toLocalDateTime(),
-      lastUpdatedAt = participant.lastUpdatedAt.atZone(ZoneId.systemDefault()).toLocalDateTime()
+      enteredAt = participant.enteredAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
+      lastUpdatedAt = participant.lastUpdatedAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
+      action = avroActionToAction(participant.action)
     )
   }
 
@@ -34,5 +35,15 @@ class ParticipantMapper(
       .setAction(roomAction)
       .setCreatedAt(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())
       .build()
+  }
+
+  fun avroActionToAction(action: Action): vottega.sse_server.dto.Action {
+    return when (action) {
+      Action.ENTER -> vottega.sse_server.dto.Action.ENTER
+      Action.EXIT -> vottega.sse_server.dto.Action.EXIT
+      Action.EDIT -> vottega.sse_server.dto.Action.EDIT
+      Action.ADD -> vottega.sse_server.dto.Action.ADD
+      Action.DELETE -> vottega.sse_server.dto.Action.DELETE
+    }
   }
 }

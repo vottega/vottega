@@ -65,7 +65,9 @@ class KafkaConsumer(
   private fun consumeParticipantInfoMessages() {
     KafkaReceiver.create(participantInfoReceiverOptions)
       .receive()
-      .map { participantMapper.toParticipantResponseDTO(it.value()) }
+      .map {
+        participantMapper.toParticipantResponseDTO(it.value())
+      }
       .doOnNext {
         fluxSinkRepository.getRoomSink(it.roomId).tryEmitNext(RoomEvent(type = RoomEventType.PARTICIPANT_INFO, it))
       }
