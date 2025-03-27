@@ -7,3 +7,8 @@ data class EmailCheckRequest(
 data class UserIdCheckRequest(
   val userId: String
 )
+
+data class LoginRequest(
+  val userId: String,
+  val password: String
+)

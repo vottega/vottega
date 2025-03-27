@@ -14,11 +14,11 @@ class UserController(private val userService: UserService, private val emailAuth
   @ResponseStatus(HttpStatus.CREATED)
   fun createUser(@RequestBody userCreateRequest: UserCreateRequest) {
     userService.createUser(
-      userCreateRequest.name,
-      userCreateRequest.userId,
-      userCreateRequest.password,
-      userCreateRequest.email,
-      userCreateRequest.emailAuthCode
+      name = userCreateRequest.name,
+      userId = userCreateRequest.userId,
+      email = userCreateRequest.email,
+      password = userCreateRequest.password,
+      emailAuthCode = userCreateRequest.emailAuthCode
     )
   }
 
@@ -37,4 +37,9 @@ class UserController(private val userService: UserService, private val emailAuth
   @PostMapping("/send")
   fun sendEmail(@RequestBody emailSendRequest: EmailSendRequest) =
     emailAuthService.sendEmailAuthCode(emailSendRequest.email)
+
+
+  @PostMapping("/login")
+  fun login(@RequestBody loginRequest: LoginRequest) =
+    userService.validateUser(loginRequest.userId, loginRequest.password)
 }
