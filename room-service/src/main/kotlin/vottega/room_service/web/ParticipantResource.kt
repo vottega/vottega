@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import vottega.room_service.dto.ParticipantInfoDTO
+import vottega.room_service.dto.ParticipantRoomDTO
 import vottega.room_service.dto.RoomResponseDTO
 import vottega.room_service.service.RoomService
 import java.util.*
@@ -37,4 +38,7 @@ class ParticipantResource(
     @RequestBody participantInfoDTO: ParticipantInfoDTO
   ): RoomResponseDTO = roomService.updateParticipant(roomId, participantId, participantInfoDTO)
 
+  @GetMapping("/participants/{participantId}")
+  fun getParticipantRoom(@PathVariable participantId: UUID): ParticipantRoomDTO =
+    roomService.getParticipantRoom(participantId)
 }
