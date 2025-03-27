@@ -2,7 +2,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: mingguniii@yonsei.ac.kr
+    username: vottega.info@gmail.com
     properties:
       mail:
         smtp:
@@ -21,10 +21,10 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6380
+      port: 6381
 springdoc:
   swagger-ui:
     path: /api
-auth:
-  service:
-    url: http://localhost:8086
+
+server:
+  port: 8087
