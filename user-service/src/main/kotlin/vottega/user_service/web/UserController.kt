@@ -1,16 +1,13 @@
 package vottega.user_service.web
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
-import vottega.user_service.dto.EmailValidateRequest
-import vottega.user_service.dto.UserCreateRequest
+import org.springframework.web.bind.annotation.*
+import vottega.user_service.dto.*
 import vottega.user_service.service.EmailAuthService
 import vottega.user_service.service.UserService
 
-@RestController("/user")
+@RestController
+@RequestMapping("/api/user")
 class UserController(private val userService: UserService, private val emailAuthService: EmailAuthService) {
 
   @PostMapping
@@ -25,8 +22,19 @@ class UserController(private val userService: UserService, private val emailAuth
     )
   }
 
-  @PostMapping
+  @PostMapping("/check/userId")
+  fun checkUserIdDuplication(@RequestBody userIdCheckRequest: UserIdCheckRequest) =
+    userService.checkUserIdDuplication(userIdCheckRequest.userId)
+
+  @PostMapping("/check/email")
+  fun checkEmailDuplication(@RequestBody emailCheckRequest: EmailCheckRequest) =
+    userService.checkEmailDuplication(emailCheckRequest.email)
+
+  @PostMapping("/validate")
   fun validateCode(@RequestBody emailValidateRequest: EmailValidateRequest) =
     emailAuthService.verifyEmail(emailValidateRequest.email, emailValidateRequest.emailAuthCode)
-  
+
+  @PostMapping("/send")
+  fun sendEmail(@RequestBody emailSendRequest: EmailSendRequest) =
+    emailAuthService.sendEmailAuthCode(emailSendRequest.email)
 }
