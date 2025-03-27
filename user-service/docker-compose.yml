@@ -1,0 +1,25 @@
+services:
+  user-db:
+    image: mariadb:latest
+    container_name: user-db
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: user-db
+      MYSQL_USER: minguni
+      MYSQL_PASSWORD: minguni
+    volumes:
+      - user-db-data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: user-redis
+    ports:
+      - "6381:6379"
+    volumes:
+      - user-redis-data:/data
+
+volumes:
+  user-db-data:
+  user-redis-data:
