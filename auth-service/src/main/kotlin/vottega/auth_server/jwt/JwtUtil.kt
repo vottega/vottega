@@ -3,6 +3,8 @@ package vottega.auth_server.jwt
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.CredentialsExpiredException
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import vottega.auth_server.dto.JwtResponseDto
@@ -24,13 +26,12 @@ class JwtUtil {
         return keyGen.generateKeyPair()
     }
 
-    // JWT 발급 (Owner Token)
-    fun generateOwnerToken(username: String, password: String): Mono<String> {
-
+    fun generateUserIdToken(id : Long, userId: String): Mono<String> {
         return Mono.fromCallable {
             Jwts.builder()
-                .setSubject(username) // username 설정
-                .claim("password", password) // password를 Claim에 추가
+                .setSubject(id.toString())
+                .claim("userId", userId)
+                .claim("role", "user")
                 .setIssuedAt(Date())
                 .setExpiration(Date(System.currentTimeMillis() + EXPIRE_TIME)) // 1시간 만료
                 .signWith(keyPair.private, SignatureAlgorithm.RS256) // RSA 서명
@@ -38,49 +39,12 @@ class JwtUtil {
         }
     }
 
-    // JWT 발급 (User ID Token)
-    fun generateUserIdToken(userId: UUID, roomId: Long): Mono<String> {
-        return Mono.fromCallable {
-            Jwts.builder()
-                .setSubject(userId.toString()) // userId 설정
-                .claim("roomId", roomId) // roomId를 Claim에 추가
-                .setIssuedAt(Date())
-                .setExpiration(Date(System.currentTimeMillis() + EXPIRE_TIME)) // 1시간 만료
-                .signWith(keyPair.private, SignatureAlgorithm.RS256) // RSA 서명
-                .compact()
-        }
-    }
-
-    /**
-     * JWT 발급 (Participant Token)
-     *
-     * @param uuid : 참여자 고유 ID (UUID).
-     * @param roomId : 방 고유 ID (Long).
-     * @return Mono<String> : JWT token as a String.
-     */
-    fun generateParticipantToken(uuid: UUID, roomId: Long): String {
-        return Jwts.builder()
-            .setSubject(uuid.toString()) // 참여자 고유 ID
-            .claim("roomId", roomId) // 방 ID
-            .claim("role", "participant") // 역할 설정
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + EXPIRE_TIME)) // 1시간 만료
-            .signWith(keyPair.private, SignatureAlgorithm.RS256) // RSA 서명
-            .compact()
-    }
-
-
-    /**
-     * JWT 발급 (User Token)
-     *
-     * @param userId The ID of the user (Long).
-     * @return Mono<String> : JWT token as a String.
-     */
-    fun generateUserToken(userId: Long): Mono<String> {
+    fun generateParticipantIdToken(userId: UUID, roomId: Long): Mono<String> {
         return Mono.fromCallable {
             Jwts.builder()
                 .setSubject(userId.toString())
-                .claim("role", "user") // 역할 설정
+                .claim("roomId", roomId)
+                .claim("role", "participant")
                 .setIssuedAt(Date())
                 .setExpiration(Date(System.currentTimeMillis() + EXPIRE_TIME)) // 1시간 만료
                 .signWith(keyPair.private, SignatureAlgorithm.RS256) // RSA 서명
@@ -116,33 +80,34 @@ class JwtUtil {
         try {
             // Parse the token and extract claims
             val claims: Claims = Jwts.parserBuilder()
-                .setSigningKey(keyPair.public) // Verify the token signature using the public key
+                .setSigningKey(keyPair.public)
                 .build()
                 .parseClaimsJws(token)
                 .body
 
             // Check if the token is expired
             if (claims.expiration.before(Date())) {
-                throw IllegalArgumentException("Token expired") // Throw an error if the token has expired
+                throw CredentialsExpiredException("Token expired")
             }
 
             // Extract role and return data based on the role
             return when (claims["role"] as? String) {
 
                 "participant" -> JwtResponseDto.JwtParticipantResponseDto(
-                    uuid = claims.subject ?: throw IllegalArgumentException("Missing UUID"),
+                    uuid = claims.subject ?: throw BadCredentialsException("Missing UUID"),
                     roomId = (claims["roomId"] as? Number)?.toLong()
-                        ?: throw IllegalArgumentException("Missing or invalid roomId")
+                        ?: throw BadCredentialsException("Missing or invalid roomId")
                 )
                 "user" -> JwtResponseDto.JwtUserResponseDto(
-                    userId = claims.subject ?: throw IllegalArgumentException("Missing userId")
+                    id = (claims.subject ?: throw BadCredentialsException("Missing id")).toLong(),
+                    userId = (claims["userId"] as? String) ?: throw BadCredentialsException("Missing userId")
                 )
-                else -> throw IllegalArgumentException("Invalid role in token")
+                else -> throw BadCredentialsException("Invalid role in token")
             }
         } catch (e: SignatureException) {
-            throw IllegalArgumentException("Invalid token signature", e) // Handle invalid token signature
+            throw BadCredentialsException("Invalid token signature", e)
         } catch (e: Exception) {
-            throw IllegalArgumentException("Invalid or expired token", e) // Handle other parsing or validation errors
+            throw BadCredentialsException("Invalid or expired token", e)
         }
     }
 
@@ -151,7 +116,4 @@ class JwtUtil {
     fun getPublicKey(): String {
         return Base64.getEncoder().encodeToString(keyPair.public.encoded);
     }
-
-
-
 }
