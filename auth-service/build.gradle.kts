@@ -38,7 +38,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.boot:spring-boot-starter-security")
-//	implementation("io.github.openfeign:feign-reactor-webclient:3.2.5") // 버전 추가
+	implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1") // 버전 추가
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
