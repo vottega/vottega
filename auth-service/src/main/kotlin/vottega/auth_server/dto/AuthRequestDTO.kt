@@ -1,6 +1,12 @@
 package vottega.auth_server.dto;
 
-data class AuthRequestDTO(
-    val username: String,
-    val password: String
+import java.util.UUID
+
+data class ParticipantAuthRequestDTO(
+    val participantId: UUID
+)
+
+data class UserAuthRequestDTO(
+    val id: Long,
+    val userId: String,
 )

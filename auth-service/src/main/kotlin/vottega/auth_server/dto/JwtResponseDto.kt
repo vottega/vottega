@@ -8,6 +8,7 @@ sealed class JwtResponseDto {
     ) : JwtResponseDto()
 
     data class JwtUserResponseDto(
+        val id: Long,
         val userId: String
     ) : JwtResponseDto()
 }
