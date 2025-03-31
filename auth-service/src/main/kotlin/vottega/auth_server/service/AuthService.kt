@@ -15,10 +15,10 @@ class AuthService(
 ) {
   fun authenticateParticipantId(userId: UUID): Mono<AuthResponseDTO> {
     return roomClient.getUserById(userId)
-      .subscribeOn(Schedulers.parallel())
+      .subscribeOn(Schedulers.boundedElastic())
       .flatMap { userResponse ->
         jwtUtil.generateParticipantIdToken(userId, userResponse.roomId)
-          .publishOn(Schedulers.boundedElastic())
+          .publishOn(Schedulers.parallel())
           .map { token ->
             AuthResponseDTO(
               token = token
@@ -29,7 +29,7 @@ class AuthService(
 
   fun createUserToken(id: Long, userId: String): Mono<AuthResponseDTO> {
     return jwtUtil.generateUserIdToken(id, userId)
-      .publishOn(Schedulers.boundedElastic())
+      .publishOn(Schedulers.parallel())
       .map { token ->
         AuthResponseDTO(
           token = token
