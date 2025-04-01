@@ -1,0 +1,18 @@
+[submodule "auth-service"]
+	path = auth-service
+	url = https://github.com/vottega/auth-service.git
+[submodule "room-service"]
+	path = room-service
+	url = https://github.com/vottega/room-service.git
+[submodule "user-service"]
+	path = user-service
+	url = https://github.com/vottega/user-service.git
+[submodule "vote-service"]
+	path = vote-service
+	url = https://github.com/vottega/vote-service.git
+[submodule "client-connection-service"]
+	path = client-connection-service
+	url = https://github.com/vottega/client-connection-service.git
+[submodule "gateway"]
+	path = gateway
+	url = https://github.com/vottega/gateway.git
