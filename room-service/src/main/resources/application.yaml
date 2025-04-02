@@ -24,15 +24,16 @@ spring:
     properties:
       schema.registry.url: http://localhost:8081
       auto.register.schemas: true
-  profiles:
-    active: local
 springdoc:
   swagger-ui:
     path: /api
+auth:
+  service:
+    url: http://localhost:8083
 
-server:
-  port: 8082
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+#server:
+#  port: 8082
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
