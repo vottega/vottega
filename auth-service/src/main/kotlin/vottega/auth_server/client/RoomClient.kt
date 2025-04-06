@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 
-@ReactiveFeignClient(name = "room-service", url = "http://localhost:8082")
+@ReactiveFeignClient(name = "room-service")
 interface RoomClient {
     @GetMapping("/room/{userID}")
     fun getUserById(@PathVariable("userID") userId: UUID): Mono<UserResponse>
