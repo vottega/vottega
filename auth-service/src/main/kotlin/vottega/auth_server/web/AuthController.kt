@@ -1,13 +1,15 @@
 package vottega.auth_server.web
 
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import vottega.auth_server.dto.*
 import vottega.auth_server.service.AuthService
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 class AuthController(private val authService: AuthService) {
   @PostMapping("/verify")
   fun verify(@RequestBody verifyRequestDTO: VerifyRequestDTO): Mono<VerifyResponseDTO> =

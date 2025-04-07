@@ -9,10 +9,10 @@ import java.util.*
 
 @ReactiveFeignClient(name = "room-service")
 interface RoomClient {
-    @GetMapping("/room/{userID}")
-    fun getUserById(@PathVariable("userID") userId: UUID): Mono<UserResponse>
+  @GetMapping("/participants/{userId}")
+  fun getUserById(@PathVariable("userId") userId: UUID): Mono<UserResponse>
 }
 
 data class UserResponse(
-    val roomId : Long,
+  val roomId: Long,
 )
