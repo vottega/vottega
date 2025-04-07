@@ -4,7 +4,10 @@ import jakarta.transaction.Transactional
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import vottega.user_service.client.AuthClient
 import vottega.user_service.domain.User
+import vottega.user_service.dto.AuthResponseDTO
+import vottega.user_service.dto.UserAuthRequestDTO
 import vottega.user_service.dto.UserResponse
 import vottega.user_service.dto.mapper.UserMapper
 import vottega.user_service.repository.UserRepository
@@ -15,7 +18,8 @@ class UserService(
   private val emailAuthService: EmailAuthService,
   private val userRepository: UserRepository,
   private val passwordEncoder: PasswordEncoder,
-  private val userMapper: UserMapper
+  private val userMapper: UserMapper,
+  private val authClient: AuthClient
 ) {
   fun createUser(
     name: String,
@@ -40,10 +44,12 @@ class UserService(
     return userRepository.existsByEmail(email)
   }
 
-  fun validateUser(userId: String, password: String): Boolean {
+  fun validateUser(userId: String, password: String): AuthResponseDTO {
     val user = userRepository.findByUserId(userId)
-    // token발급은 authService에서
-    return user != null && passwordEncoder.matches(password, user.password)
+    if (user != null && passwordEncoder.matches(password, user.password)) {
+      return authClient.getRoom(UserAuthRequestDTO(id = user.id!!, userId = userId))
+    }
+    throw BadCredentialsException("Invalid userId or password")
   }
 
   //security 추가

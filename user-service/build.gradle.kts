@@ -21,6 +21,17 @@ configurations {
   }
 }
 
+ext {
+  set("springCloudVersion", "2023.0.3")
+}
+
+
+dependencyManagement {
+  imports {
+    mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+  }
+}
+
 repositories {
   mavenCentral()
 }
@@ -32,6 +43,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+  implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.kafka:spring-kafka")
   compileOnly("org.projectlombok:lombok")
