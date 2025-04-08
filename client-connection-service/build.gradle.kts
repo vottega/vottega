@@ -27,6 +27,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.springframework.boot:spring-boot-configuration-processor")
+  implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   //implementation("org.springframework.boot:spring-boot-starter-security")
   testImplementation("io.projectreactor:reactor-test")
