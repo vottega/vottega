@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: user-service
   mail:
     host: smtp.gmail.com
     port: 587
@@ -28,3 +30,8 @@ springdoc:
 
 server:
   port: 8087
+
+  eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8761/eureka
