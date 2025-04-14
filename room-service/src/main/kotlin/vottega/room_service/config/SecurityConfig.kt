@@ -20,17 +20,14 @@ class SecurityConfig {
   fun webSecurityCustomizer(http: HttpSecurity): SecurityFilterChain {
 
     http
-      // 이 체인은 /api/** 로 들어오는 요청만 매칭
       .securityMatcher(
         AntPathRequestMatcher("/**")
       )
       .csrf { it.disable() }
       .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
       .authorizeHttpRequests {
-        // 여긴 전부 허용
         it.anyRequest().permitAll()
       }
-    // CustomHeaderAuthenticationFilter 등록하지 않음
     return http.build()
   }
 

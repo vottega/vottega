@@ -7,11 +7,11 @@ import java.util.*
 
 class CustomParticipantRoleAuthenticationToken(
   private val participantUUID: UUID,
-) : AbstractAuthenticationToken(listOf(SimpleGrantedAuthority(ClientRole.PARTICIPANT.name))) {
+) : AbstractAuthenticationToken(listOf(SimpleGrantedAuthority(ClientRole.PARTICIPANT.roleName))) {
   init {
     isAuthenticated = true
   }
 
-  override fun getCredentials(): Any = ClientRole.PARTICIPANT.name
+  override fun getCredentials(): Any = ClientRole.PARTICIPANT.roleName
   override fun getPrincipal(): Any = participantUUID
 }

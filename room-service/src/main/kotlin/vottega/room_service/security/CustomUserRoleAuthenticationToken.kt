@@ -6,11 +6,11 @@ import vottega.room_service.dto.ClientRole
 
 class CustomUserRoleAuthenticationToken(
   private val userId: Long,
-) : AbstractAuthenticationToken(listOf(SimpleGrantedAuthority(ClientRole.USER.name))) {
+) : AbstractAuthenticationToken(listOf(SimpleGrantedAuthority(ClientRole.USER.roleName))) {
   init {
     isAuthenticated = true
   }
 
-  override fun getCredentials(): Any = ClientRole.USER.name
+  override fun getCredentials(): Any = ClientRole.USER.roleName
   override fun getPrincipal(): Any = userId
 }
