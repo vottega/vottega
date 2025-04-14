@@ -131,6 +131,8 @@ class RoomService(
     return roomMapper.toRoomOutDTO(room)
   }
 
+
+  @PreAuthorize("hasRole('USER')")
   fun getRoomList(userId: Long): List<RoomResponseDTO> {
     return roomRepository.findByUserId(userId).map { roomMapper.toRoomOutDTO(it) }
   }
