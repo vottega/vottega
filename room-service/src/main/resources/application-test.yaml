@@ -9,3 +9,13 @@ spring:
   h2:
     console:
       enabled: true
+  autoconfigure:
+    exclude=org:
+      springframework:
+        boot:
+          autoconfigure:
+            kafka:
+              KafkaAutoConfiguration:
+  kafka:
+    admin:
+      enabled=false:

@@ -59,7 +59,6 @@ dependencies {
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   implementation("org.apache.avro:avro:1.11.4")
   implementation("io.confluent:kafka-avro-serializer:7.5.0")
-  testImplementation("io.confluent:kafka-schema-registry-mock:7.5.0")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
