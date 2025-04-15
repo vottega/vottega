@@ -12,6 +12,11 @@ class RoomSecurity(private val roomRepository: RoomRepository) {
     return room.participantList.any { it.id == participantId }
   }
 
+  fun isParticipantInRoom(roomId: Long, ownerId: Long): Boolean {
+    val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
+    return room.ownerId == ownerId
+  }
+
   fun isOwner(roomId: Long, ownerId: Long): Boolean {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     return room.ownerId == ownerId
