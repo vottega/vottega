@@ -21,8 +21,8 @@ class ParticipantResource(
   @ResponseStatus(HttpStatus.CREATED)
   fun addParticipants(
     @PathVariable roomId: Long,
-    @RequestBody ParticipantInfoDTOList: List<ParticipantInfoDTO>
-  ): RoomResponseDTO = roomService.addParticipant(roomId, ParticipantInfoDTOList)
+    @RequestBody participantInfoDTOList: List<ParticipantInfoDTO>
+  ): RoomResponseDTO = roomService.addParticipant(roomId, participantInfoDTOList)
 
   @DeleteMapping("/{roomId}/participants/{participantId}")
   @Operation(summary = "참가자 삭제", description = "방에서 참가자를 삭제합니다.")
