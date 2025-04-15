@@ -43,7 +43,7 @@ class RoomService(
   }
 
 
-  @PreAuthorize("@roomSecurity.isOwner(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @roomSecurity.isOwner(#roomId, authentication.principal)")
   fun updateRoom(roomId: Long, roomName: String?, status: RoomStatus?): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.update(roomName, status)
@@ -53,7 +53,7 @@ class RoomService(
   }
 
 
-  @PreAuthorize("@roomSecurity.isOwner(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @roomSecurity.isOwner(#roomId, authentication.principal)")
   fun addParticipant(roomId: Long, participantInfoDTOS: List<ParticipantInfoDTO>): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     participantInfoDTOS.forEach {
@@ -69,7 +69,7 @@ class RoomService(
   }
 
 
-  @PreAuthorize("@roomSecurity.isOwner(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @roomSecurity.isOwner(#roomId, authentication.principal)")
   fun removeParticipant(roomId: Long, participantId: UUID): RoomResponseDTO {
     //TODO 방장은 못지우게
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
@@ -83,7 +83,7 @@ class RoomService(
   }
 
 
-  @PreAuthorize("@roomSecurity.isOwner(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @roomSecurity.isOwner(#roomId, authentication.principal)")
   fun updateParticipant(
     roomId: Long,
     participantId: UUID,
@@ -110,7 +110,7 @@ class RoomService(
   }
 
 
-  @PreAuthorize("@roomSecurity.isOwner(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @roomSecurity.isOwner(#roomId, authentication.principal)")
   fun addRole(roomId: Long, roleInfo: ParticipantRoleDTO): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.apply { addParticipantRole(roleInfo.role, roleInfo.canVote) }
@@ -118,7 +118,7 @@ class RoomService(
   }
 
 
-  @PreAuthorize("@roomSecurity.isOwner(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @roomSecurity.isOwner(#roomId, authentication.principal)")
   fun deleteRole(roomId: Long, role: String): RoomResponseDTO {
     val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
     room.apply { deleteParticipantRole(role) }
