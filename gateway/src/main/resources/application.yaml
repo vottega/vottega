@@ -1,53 +1,48 @@
-#spring:
-#  application:
-#    name: spring-gateway
-
-
-server:
-    port: 8080
-
 spring:
   application:
-    name: spring-gateway
-
+    name: api-gateway
   cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false # Ribbon을 사용하지 않도록 설정
     gateway:
       discovery:
         locator:
-          enabled: true # Eureka를 통해 동적으로 서비스 목록을 가져올 수 있도록 설정
+          enabled: true
           lower-case-service-id: true
+      default-filters:
+        - TokenCheck
       routes:
-        - id: room-service
-          uri: lb://room-service
-          predicates:
-            - Path=/room/**
-
         - id: user-service
-          uri: lb://user-service
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
-
+          filters:
+            - StripPrefix=1
+        - id: room-service
+          uri: lb://ROOM-SERVICE
+          predicates:
+            - Path=/room/**
+          filters:
+            - StripPrefix=1
         - id: vote-service
-          uri: lb://vote-service
+          uri: lb://VOTE-SERVICE
           predicates:
             - Path=/vote/**
-
+          filters:
+            - StripPrefix=1
         - id: auth-service
-          uri: lb://auth-service
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        - id: sse-service
+          uri: lb://SSE-SERVICE
+          predicates:
+            - Path=/sse/**
+          filters:
+            - StripPrefix=1
+
+
 eureka:
   client:
-    defaultZone: http://localhost:8761/eureka/ # Eureka 서버의 주소를 설정
-
-auth:
-  service:
-    url: http://localhost:8084
-service:
-  room: http://localhost:8081
-  user: http://localhost:8082
-  vote: http://localhost:8083
-  auth: http://localhost:8084
+    service-url:
+      defaultZone: http://eureka:8761/eureka
