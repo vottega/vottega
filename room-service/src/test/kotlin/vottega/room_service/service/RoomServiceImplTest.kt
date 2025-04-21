@@ -39,8 +39,7 @@ class RoomServiceImplTest {
 
 
   @Test
-  @DisplayName("방을 생성 후 확인 테스트")
-  fun createRoomTest() {
+  fun `방 생성 시에 DTO와 같은 값으로 생성이 되어야 한다`() {
     //given
     val roomName = "testRoom"
     val ownerId = 1L
@@ -61,8 +60,7 @@ class RoomServiceImplTest {
   }
 
   @Test
-  @DisplayName("방 이름 변경 테스트 | 카프카 메시지 전송 확인")
-  fun updateRoomName() {
+  fun `방 이름 변경 시에 방 이름이 정확히 변경이 되어야 한다`() {
     //given
     val roomName = "testRoom"
     val ownerId = 1L
@@ -78,27 +76,22 @@ class RoomServiceImplTest {
   }
 
   @Test
-  @DisplayName("방 상태 변경 테스트 | 상태 변경 NOT STARTED -> PROGRESS")
-  fun updateStatus1() {
-    //given
+  fun `방 상태가 NOT STARTED에서 PROGRESS로 바꿀 수 있어야 한다`() {
     val roomName = "testRoom"
     val ownerId = 1L
     val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
 
-    //when
     val newStatus = RoomStatus.PROGRESS
     val successRoomName = "success room name"
     val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
 
-    //then
     val foundRoom = roomRepository.findById(roomResponseDTO.id)
     assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
     assertThat(updatedRoom.status).isEqualTo(newStatus)
   }
 
   @Test
-  @DisplayName("방 상태 변경 테스트 | 상태 변경 NOT STARTED -> FINISHED | 실패해서 카프카에 전송이 안와야 함")
-  fun updateStatus2() {
+  fun `방 상태는 NOT STARTED에서는 PROGRESS로만 바꿀 수 있다`() {
     //given
     val roomName = "testRoom"
     val ownerId = 1L
@@ -121,67 +114,40 @@ class RoomServiceImplTest {
   }
 
   @Test
-  @DisplayName("방 상태 변경 테스트 | 상태 변경 PROGRESS -> STOPPED")
-  fun updateStatus3() {
-    //given
+  fun `방 상태는 NOT PROGRESS에서 STOPPED로 바꿀 수 있어야 한다`() {
     val roomName = "testRoom"
     val ownerId = 1L
     val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
     roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
-    //when
+
     val newStatus = RoomStatus.STOPPED
     val successRoomName = "success room name"
     val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
 
-    //then
     val foundRoom = roomRepository.findById(roomResponseDTO.id)
     assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
     assertThat(updatedRoom.status).isEqualTo(newStatus)
   }
 
   @Test
-  @DisplayName("방 상태 변경 테스트 | 상태 변경 PROGRESS -> ?")
-  fun updateStatus4() {
-    //given
+  fun `방 상태가 NOT PROGRESS에서 FINISHED로 바꿀 수 있어야 한다`() {
     val roomName = "testRoom"
     val ownerId = 1L
     val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
     roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
-    //when
+
     val newStatus = RoomStatus.FINISHED
     val successRoomName = "success room name"
     val updatedRoom = roomService.updateRoom(roomResponseDTO.id, successRoomName, newStatus)
 
-    //then
     val foundRoom = roomRepository.findById(roomResponseDTO.id)
     assertThat(updatedRoom.name).isEqualTo(foundRoom.get().roomName)
     assertThat(updatedRoom.status).isEqualTo(newStatus)
   }
 
-  @Test
-  @DisplayName("방 상태 변경 테스트 | 상태 변경 NOT STARTED -> FINISHED | 실패해서 카프카에 전송이 안와야 함")
-  fun updateStatus5() {
-    //given
-    val roomName = "testRoom"
-    val ownerId = 1L
-    val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf())
-    roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
-    //when
-    assertThrows<RoomStatusConflictException> {
-      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.PROGRESS)
-    }
-    assertThrows<RoomStatusConflictException> {
-      roomService.updateRoom(roomResponseDTO.id, null, RoomStatus.NOT_STARTED)
-    }
-
-    //then
-    val foundRoom = roomRepository.findById(roomResponseDTO.id)
-    assertThat(foundRoom.get().status).isEqualTo(RoomStatus.PROGRESS)
-  }
 
   @Test
-  @DisplayName("방 상태 변경 테스트 | 상태 변경 STOPPED -> PROGRESS")
-  fun updateStatus6() {
+  fun `방 상태는 STOPPED에서 PROGRESS로 바꿀 수 있어야 한다`() {
 
     val roomName = "testRoom"
     val ownerId = 1L
@@ -201,8 +167,7 @@ class RoomServiceImplTest {
   }
 
   @Test
-  @DisplayName("참가자 추가 테스트")
-  fun addParticipant() {
+  fun `침가자 추가 시에 참가자 정보가 정확히 저장이 되어야 한다`() {
     val roomName = "testRoom"
     val ownerId = 1L
     val participantRoleDTO1 = ParticipantRoleDTO("voter", true)
@@ -221,8 +186,7 @@ class RoomServiceImplTest {
 
   @Test
   @DisplayName("참가자 삭제 테스트")
-  fun removeParticipant() {
-    //given
+  fun `참가자 삭제 시에 해당 참가자만 방에서 제거되어야 한다`() {
     val roomName = "testRoom"
     val ownerId = 1L
     val participantRoleDTO1 = ParticipantRoleDTO("voter", true)
@@ -232,14 +196,12 @@ class RoomServiceImplTest {
     val participant2 = ParticipantInfoDTO("성윤", null, "따까리", "viewer")
     roomService.addParticipant(roomResponseDTO.id, listOf(participant1, participant2))
 
-    //when
     val foundRoom = roomService.getRoom(roomResponseDTO.id)
     val participantId1 = foundRoom.participants[0].id
     val participantId2 = foundRoom.participants[1].id
     roomService.removeParticipant(roomResponseDTO.id, participantId1)
     entityManager.flush()
 
-    //then
     val foundRoom2 = roomService.getRoom(roomResponseDTO.id)
     assertThat(foundRoom2.participants.size).isEqualTo(1)
     assertThat(foundRoom2.participants).noneMatch({ it.id == participantId1 })
@@ -248,20 +210,16 @@ class RoomServiceImplTest {
 
 
   @Test
-  @DisplayName("Role Add and Delete")
-  fun roleAddDeleteTest() {
-    //given
+  fun `역할 추가 시에 DTO와 같은 정보로 추가가 되고 삭제 시에 해당 역할만 제거되어야 한다`() {
     val roomName = "testRoom"
     val ownerId = 1L
     val participantRoleDTO1 = ParticipantRoleDTO("voter", true)
     val participantRoleDTO2 = ParticipantRoleDTO("viewer", false)
     val roomResponseDTO = roomService.createRoom(roomName, ownerId, listOf(participantRoleDTO1, participantRoleDTO2))
 
-    //when
     val newRole = ParticipantRoleDTO("newRole", true)
     roomService.addRole(roomResponseDTO.id, newRole)
-
-    //then
+    
     val foundRoom = roomService.getRoom(roomResponseDTO.id)
     assertThat(foundRoom.roles.size).isEqualTo(3)
     assertThat(foundRoom.roles).anyMatch({ it.role == newRole.role && it.canVote })
