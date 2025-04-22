@@ -22,6 +22,7 @@ class CustomHeaderAuthenticationFilter : OncePerRequestFilter() {
     } catch (e: Exception) {
       null
     }
+    val roomId = request.getHeader("X-Room-Id")?.toLongOrNull()
     val role = try {
       ClientRole.valueOf(headerRole)
     } catch (e: Exception) {
@@ -29,7 +30,7 @@ class CustomHeaderAuthenticationFilter : OncePerRequestFilter() {
     }
     if (
       role == null ||
-      (role == ClientRole.PARTICIPANT && participantUUID == null) ||
+      (role == ClientRole.PARTICIPANT && (participantUUID == null || roomId == null)) ||
       (role == ClientRole.USER && userId == null)
     ) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
@@ -37,9 +38,10 @@ class CustomHeaderAuthenticationFilter : OncePerRequestFilter() {
     }
 
     val authentication: Authentication = when {
-      role == ClientRole.USER && userId != null -> CustomUserRoleAuthenticationToken(userId)
-      role == ClientRole.PARTICIPANT && participantUUID != null -> CustomParticipantRoleAuthenticationToken(
-        participantUUID
+      role == ClientRole.USER -> CustomUserRoleAuthenticationToken(userId!!)
+      role == ClientRole.PARTICIPANT -> CustomParticipantRoleAuthenticationToken(
+        participantUUID!!,
+        roomId!!
       )
 
       else -> {
