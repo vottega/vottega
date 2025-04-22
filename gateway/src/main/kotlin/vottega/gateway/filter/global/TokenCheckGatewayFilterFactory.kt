@@ -41,8 +41,10 @@ class TokenCheckGatewayFilterFactory(
                 .apply {
                   if (result.role == Role.USER)
                     header("X-User-Id", result.userId.toString())
-                  else
+                  else{
                     header("X-Participant-Id", result.participantId.toString())
+                    header("X-Room-Id", result.roomId.toString())
+                  }
                 }
                 .build()
               chain.filter(exchange.mutate().request(mutated).build())
