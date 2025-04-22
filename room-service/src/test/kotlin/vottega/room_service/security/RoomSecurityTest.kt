@@ -83,6 +83,7 @@ class RoomSecurityTest {
       headers {
         this["X-Client-Role"] = ClientRole.PARTICIPANT.name
         this["X-Participant-Id"] = participantId.toString()
+        this["X-Room-Id"] = roomId.toString()
       }
     }
       .andExpect {
@@ -165,6 +166,7 @@ class RoomSecurityTest {
       headers {
         this["X-Client-Role"] = ClientRole.PARTICIPANT.name
         this["X-Participant-Id"] = participantId.toString()
+        this["X-Room-Id"] = roomId.toString()
       }
     }
       .andExpect {
@@ -191,6 +193,7 @@ class RoomSecurityTest {
       headers {
         this["X-Client-Role"] = ClientRole.PARTICIPANT.name
         this["X-Participant-Id"] = participantId.toString()
+        this["X-Room-Id"] = roomId.toString()
       }
     }
       .andExpect {
@@ -202,6 +205,7 @@ class RoomSecurityTest {
       headers {
         this["X-Client-Role"] = ClientRole.PARTICIPANT.name
         this["X-Participant-Id"] = UUID.randomUUID().toString()
+        this["X-Room-Id"] = roomId.toString()
       }
     }
       .andExpect {
