@@ -12,6 +12,7 @@ class AuthWebClient(private val webClientBuilder: WebClient.Builder) {
     webClientBuilder.baseUrl("lb://AUTH-SERVICE").build()
       .post()
       .uri("/api/auth/verify")
+      .bodyValue(VerifyRequest(token))
       .retrieve()
       .bodyToMono(VerifyResponseDTO::class.java)
 }
@@ -21,4 +22,8 @@ data class VerifyResponseDTO(
   val participantId: UUID?,
   val roomId: Long?,
   val userId: Long?
+)
+
+data class VerifyRequest(
+  val token: String
 )
