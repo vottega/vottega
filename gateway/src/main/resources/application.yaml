@@ -13,33 +13,23 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/user/**
         - id: room-service
           uri: lb://ROOM-SERVICE
           predicates:
-            - Path=/room/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/room/**
         - id: vote-service
           uri: lb://VOTE-SERVICE
           predicates:
-            - Path=/vote/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/vote/**
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/auth/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/auth/**
         - id: sse-service
           uri: lb://SSE-SERVICE
           predicates:
-            - Path=/sse/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/sse/**
 server:
   port: 9000
 
