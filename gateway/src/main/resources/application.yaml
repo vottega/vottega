@@ -40,7 +40,8 @@ spring:
             - Path=/sse/**
           filters:
             - StripPrefix=1
-
+server:
+  port: 9000
 
 eureka:
   client:
