@@ -1,3 +1,5 @@
+package vottega.gateway.filter.global
+
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
 import org.springframework.http.HttpHeaders
