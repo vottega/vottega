@@ -16,9 +16,6 @@ spring:
 springdoc:
   swagger-ui:
     path: /api
-room:
-  service:
-    url: http://localhost:8080
 server:
   port: 8084
 
