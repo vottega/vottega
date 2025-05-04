@@ -17,7 +17,7 @@ import java.util.*
 @Tag(name = "SSE Controller", description = "SSE 관련 API")
 class SseController(private val sseService: SseService) {
 
-  @GetMapping("/sse/room", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+  @GetMapping("/api/sse/room", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
   @Operation(summary = "SSE 연결", description = "SSE 연결을 위한 API")
   fun connectToRoom(@RoomId roomId: Long, @ParticipantId userId: UUID): Flux<RoomEvent> { //TODO UUID는 security로 받기
     return sseService.enterRoom(roomId, userId).doOnCancel {
