@@ -7,7 +7,7 @@ import java.util.*
 
 class CustomParticipantRoleAuthenticationToken(
   private val participantUUID: UUID,
-  private val roomId: Long,
+  val roomId: Long,
 ) : AbstractAuthenticationToken(listOf(SimpleGrantedAuthority(ClientRole.PARTICIPANT.roleName))) {
   init {
     isAuthenticated = true
@@ -15,5 +15,4 @@ class CustomParticipantRoleAuthenticationToken(
 
   override fun getCredentials(): Any = ClientRole.PARTICIPANT.roleName
   override fun getPrincipal(): Any = participantUUID
-  fun getRoomId(): Long = roomId
 }
