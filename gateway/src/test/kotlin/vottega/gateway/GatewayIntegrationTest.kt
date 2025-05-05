@@ -1,6 +1,5 @@
 package vottega.gateway.filter
 
-import TokenCheckGatewayFilterFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,6 +21,7 @@ import reactor.test.StepVerifier
 import vottega.gateway.client.AuthWebClient
 import vottega.gateway.client.VerifyResponseDTO
 import vottega.gateway.dto.Role
+import vottega.gateway.filter.global.TokenCheckGatewayFilterFactory
 import java.nio.charset.StandardCharsets
 import java.util.*
 
