@@ -21,7 +21,7 @@ class TokenCheckGatewayFilterFactory(
   class Config
   override fun apply(config: Config): GatewayFilter = GatewayFilter { exchange, chain ->
     val path = exchange.request.uri.path
-    if (path.startsWith("/user") || path.startsWith("/auth")) {
+    if (path.startsWith("/api/user") || path.startsWith("/api/auth")) {
       return@GatewayFilter chain.filter(exchange)
     }
 
