@@ -8,9 +8,9 @@ import java.util.*
 @Service
 class RoomClient(private val webClientBuilder: WebClient.Builder) {
   fun getUserById(userId: UUID): Mono<UserResponse> {
-    return webClientBuilder.build()
+    return webClientBuilder.baseUrl("lb://ROOM-SERVICE").build()
       .get()
-      .uri("http://room-service/api/room/participants/${userId}")
+      .uri("/api/room/participants/${userId}")
       .retrieve()
       .bodyToMono(UserResponse::class.java)
   }
