@@ -1,6 +1,7 @@
-server:
+spring:
   application:
     name: auth-service
+server:
   port: 8083
 springdoc:
   swagger-ui:
