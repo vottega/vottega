@@ -28,6 +28,17 @@ class SseService(
       }
   }
 
+//  fun enterUserRoom(roomId: Long, userId: Long): Flux<RoomEvent> {
+//    val addUserMono = roomParticipantRepository.addUserParticipant(roomId, userId)
+//    val sinkMono = Mono.fromSupplier { sinkRepository.getRoomSink(roomId) }
+//    val kafkaMono = kafkaProducer.participantProducer(roomId, userId, Action.ENTER)
+//
+//    return Mono.zip(addUserMono, sinkMono, kafkaMono)
+//      .flatMapMany { tuple ->
+//        tuple.t2.asFlux()
+//      }
+//  }
+
   fun exitRoom(roomId: Long, userId: UUID) {
     roomParticipantRepository.removeParticipant(roomId, userId)
       .flatMap { remainingParticipants ->
