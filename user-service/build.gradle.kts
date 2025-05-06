@@ -51,6 +51,8 @@ dependencies {
   runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
   annotationProcessor("org.projectlombok:lombok")
 
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testImplementation("org.springframework.security:spring-security-test")
