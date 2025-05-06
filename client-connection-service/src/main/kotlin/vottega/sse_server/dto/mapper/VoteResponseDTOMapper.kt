@@ -21,7 +21,7 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
       minParticipantNumber = voteAvro.minParticipantNumber,
       minParticipantRate = fractionMapper.toFractionVO(voteAvro.minParticipantRate),
       isSecret = voteAvro.isSecret,
-      reservedStartTime = voteAvro.reservedStartTime.atZone(ZoneId.systemDefault()).toLocalDateTime(),
+      reservedStartTime = voteAvro.reservedStartTime?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
       voteAction = voteAvro.voteAction,
       startedAt = voteAvro.startedAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
       finishedAt = voteAvro.finishedAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
