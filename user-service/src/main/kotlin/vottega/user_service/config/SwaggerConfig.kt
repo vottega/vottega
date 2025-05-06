@@ -18,7 +18,7 @@ class SwaggerConfig {
   private fun apiInfo(): Info {
     return Info()
       .title("API Test")
-      .description("Vote Service API")
+      .description("User Service API")
       .version("1.0.0")
   }
 }
