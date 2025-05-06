@@ -6,22 +6,23 @@ import reactor.core.scheduler.Schedulers
 import vottega.auth_server.client.RoomClient
 import vottega.auth_server.dto.*
 import vottega.auth_server.jwt.JwtUtil
-import java.util.UUID
+import java.util.*
 
 @Service
 class AuthService(
   private val jwtUtil: JwtUtil,
   private val roomClient: RoomClient,
 ) {
-  fun authenticateParticipantId(userId: UUID): Mono<AuthResponseDTO> {
+  fun authenticateParticipantId(userId: UUID): Mono<ParticipantAuthResponseDTO> {
     return roomClient.getUserById(userId)
       .subscribeOn(Schedulers.boundedElastic())
       .flatMap { userResponse ->
         jwtUtil.generateParticipantIdToken(userId, userResponse.roomId)
           .publishOn(Schedulers.parallel())
           .map { token ->
-            AuthResponseDTO(
-              token = token
+            ParticipantAuthResponseDTO(
+              token = token,
+              roomId = userResponse.roomId,
             )
           }
       }
@@ -32,7 +33,7 @@ class AuthService(
       .publishOn(Schedulers.parallel())
       .map { token ->
         AuthResponseDTO(
-          token = token
+          token = token,
         )
       }
   }

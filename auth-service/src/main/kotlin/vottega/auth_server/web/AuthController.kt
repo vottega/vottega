@@ -22,5 +22,5 @@ class AuthController(private val authService: AuthService) {
   @PostMapping("/participant")
   fun authenticateParticipant(
     @RequestBody participantAuthRequestDTO: ParticipantAuthRequestDTO
-  ): Mono<AuthResponseDTO> = authService.authenticateParticipantId(participantAuthRequestDTO.participantId)
+  ): Mono<ParticipantAuthResponseDTO> = authService.authenticateParticipantId(participantAuthRequestDTO.participantId)
 }
