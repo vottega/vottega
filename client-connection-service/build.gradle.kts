@@ -40,6 +40,7 @@ dependencies {
   implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
