@@ -17,30 +17,22 @@ class SseService(
   private val sinkRepository: SinkRepository,
   private val roomParticipantRepository: RoomParticipantRepository
 ) {
-  fun enterRoom(roomId: Long, userId: UUID): Flux<RoomEvent> {
-    val addUserMono = roomParticipantRepository.addParticipant(roomId, userId)
-    val sinkMono = Mono.fromSupplier { sinkRepository.getRoomSink(roomId) }
-    val kafkaMono = kafkaProducer.participantProducer(roomId, userId, Action.ENTER)
+  fun enterRoom(roomId: Long, userId: Any): Flux<RoomEvent> {
+    val updateCache = roomParticipantRepository.addParticipant(roomId, userId)
+    val sendKafka = if (userId is UUID) {
+      kafkaProducer.participantProducer(roomId, userId, Action.ENTER)
+    } else {
+      Mono.empty()
+    }
 
-    return Mono.zip(addUserMono, sinkMono, kafkaMono)
-      .flatMapMany { tuple ->
-        tuple.t2.asFlux()
-      }
+    return Mono.`when`(updateCache, sendKafka)
+      .then(Mono.fromSupplier { sinkRepository.getRoomSink(roomId) })
+      .flatMapMany { sink -> sink.asFlux() }
   }
 
-//  fun enterUserRoom(roomId: Long, userId: Long): Flux<RoomEvent> {
-//    val addUserMono = roomParticipantRepository.addUserParticipant(roomId, userId)
-//    val sinkMono = Mono.fromSupplier { sinkRepository.getRoomSink(roomId) }
-//    val kafkaMono = kafkaProducer.participantProducer(roomId, userId, Action.ENTER)
-//
-//    return Mono.zip(addUserMono, sinkMono, kafkaMono)
-//      .flatMapMany { tuple ->
-//        tuple.t2.asFlux()
-//      }
-//  }
 
-  fun exitRoom(roomId: Long, userId: UUID) {
-    roomParticipantRepository.removeParticipant(roomId, userId)
+  fun exitRoom(roomId: Long, userId: Any): Mono<Void> {
+    val updateCache = roomParticipantRepository.removeParticipant(roomId, userId)
       .flatMap { remainingParticipants ->
         if (remainingParticipants.isEmpty()) {
           sinkRepository.removeRoomSink(roomId)
@@ -48,8 +40,11 @@ class SseService(
           Mono.empty()
         }
       }
-      .subscribe()
-    kafkaProducer.participantProducer(roomId, userId, Action.EXIT).subscribe()
+    val sendKafka = if (userId is UUID) {
+      kafkaProducer.participantProducer(roomId, userId, Action.EXIT)
+    } else {
+      Mono.empty()
+    }
+    return Mono.`when`(updateCache, sendKafka)
   }
-
 }

@@ -11,7 +11,7 @@ class SinkRepository {
   private val sinkMap = ConcurrentHashMap<Long, Sinks.Many<RoomEvent>>()
 
   fun removeRoomSink(roomId: Long): Mono<Void> {
-    return Mono.fromRunnable { sinkMap.remove(roomId) }
+    return Mono.fromRunnable { sinkMap.remove(roomId)?.tryEmitComplete() }
   }
 
   fun getRoomSink(roomId: Long): Sinks.Many<RoomEvent> {
