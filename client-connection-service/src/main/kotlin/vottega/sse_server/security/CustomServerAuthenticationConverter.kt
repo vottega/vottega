@@ -10,22 +10,26 @@ import java.util.*
 class CustomServerAuthenticationConverter : ServerAuthenticationConverter {
   override fun convert(exchange: ServerWebExchange): Mono<Authentication> {
     val headers = exchange.request.headers
-    print(headers)
     val roleHeader = headers.getFirst("X-Client-Role") ?: return Mono.empty()
 
     val role = runCatching { ClientRole.valueOf(roleHeader) }.getOrNull() ?: return Mono.empty()
 
     return when (role) {
-      ClientRole.USER -> {
-        val userId = headers.getFirst("X-User-Id")?.toLongOrNull() ?: return Mono.empty()
-        Mono.just(CustomUserRoleAuthenticationToken(userId))
-      }
+      ClientRole.USER ->
+        headers.getFirst("X-User-Id")
+          ?.toLongOrNull()
+          ?.let { Mono.just(CustomUserRoleAuthenticationToken(it)) }
+          ?: Mono.empty()
+
 
       ClientRole.PARTICIPANT -> {
-        val participantId = runCatching { UUID.fromString(headers.getFirst("X-Participant-Id")) }.getOrNull()
-          ?: return Mono.empty()
-        val roomId = headers.getFirst("X-Room-Id")?.toLongOrNull() ?: return Mono.empty()
-        Mono.just(CustomParticipantRoleAuthenticationToken(participantId, roomId))
+        val participantId = headers.getFirst("X-Participant-Id")
+          ?.let { runCatching { UUID.fromString(it) }.getOrNull() }
+        val roomId = headers.getFirst("X-Room-Id")?.toLongOrNull()
+
+        if (participantId != null && roomId != null)
+          Mono.just(CustomParticipantRoleAuthenticationToken(participantId, roomId))
+        else Mono.empty()
       }
     }
   }
