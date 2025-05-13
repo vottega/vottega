@@ -23,15 +23,15 @@ class UserController(private val userService: UserService, private val emailAuth
   }
 
   @PostMapping("/check/userId")
-  fun checkUserIdDuplication(@RequestBody userIdCheckRequest: UserIdCheckRequest) =
+  fun checkUserIdDuplication(@RequestBody userIdCheckRequest: UserIdCheckRequest): DuplicateCheckResponse =
     userService.checkUserIdDuplication(userIdCheckRequest.userId)
 
   @PostMapping("/check/email")
-  fun checkEmailDuplication(@RequestBody emailCheckRequest: EmailCheckRequest) =
+  fun checkEmailDuplication(@RequestBody emailCheckRequest: EmailCheckRequest): DuplicateCheckResponse =
     userService.checkEmailDuplication(emailCheckRequest.email)
 
   @PostMapping("/validate")
-  fun validateCode(@RequestBody emailValidateRequest: EmailValidateRequest) =
+  fun validateCode(@RequestBody emailValidateRequest: EmailValidateRequest): DuplicateCheckResponse =
     emailAuthService.verifyEmail(emailValidateRequest.email, emailValidateRequest.emailAuthCode)
 
   @PostMapping("/send")

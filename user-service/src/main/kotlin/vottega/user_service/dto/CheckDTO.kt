@@ -12,3 +12,7 @@ data class LoginRequest(
   val userId: String,
   val password: String
 )
+
+data class DuplicateCheckResponse(
+  val isDuplicate: Boolean
+)

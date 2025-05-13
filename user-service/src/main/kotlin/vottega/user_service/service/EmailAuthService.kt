@@ -2,6 +2,7 @@ package vottega.user_service.service
 
 import org.springframework.stereotype.Service
 import vottega.user_service.cache.EmailAuthCacheService
+import vottega.user_service.dto.DuplicateCheckResponse
 
 @Service
 class EmailAuthService(
@@ -15,8 +16,8 @@ class EmailAuthService(
     emailSendService.sendVerifyEmail(email, code)
   }
 
-  fun verifyEmail(email: String, code: String): Boolean {
+  fun verifyEmail(email: String, code: String): DuplicateCheckResponse {
     val savedCode = emailAuthCacheService.getEmailAuthCode(email)
-    return savedCode == code
+    return DuplicateCheckResponse(savedCode == code)
   }
 }

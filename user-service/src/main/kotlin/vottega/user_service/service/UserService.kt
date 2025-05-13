@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import vottega.user_service.client.AuthClient
 import vottega.user_service.domain.User
 import vottega.user_service.dto.AuthResponseDTO
+import vottega.user_service.dto.DuplicateCheckResponse
 import vottega.user_service.dto.UserAuthRequestDTO
 import vottega.user_service.dto.UserResponse
 import vottega.user_service.dto.mapper.UserMapper
@@ -28,20 +29,25 @@ class UserService(
     password: String,
     emailAuthCode: String
   ): UserResponse {
-    if (!emailAuthService.verifyEmail(email, emailAuthCode)) {
+    if (!emailAuthService.verifyEmail(email, emailAuthCode).isDuplicate) {
       throw BadCredentialsException("Email verification failed")
     }
-    val user = User(username = name, userId = userId, email = email, password = passwordEncoder.encode(password))
+    val user = User(
+      username = name,
+      userId = userId,
+      email = email,
+      password = passwordEncoder.encode(password)
+    ) // 중복이면 알아서 409가 나감
     userRepository.save(user)
     return userMapper.toUserDTO(user)
   }
 
-  fun checkUserIdDuplication(userId: String): Boolean {
-    return userRepository.existsByUserId(userId)
+  fun checkUserIdDuplication(userId: String): DuplicateCheckResponse {
+    return DuplicateCheckResponse(userRepository.existsByUserId(userId))
   }
 
-  fun checkEmailDuplication(email: String): Boolean {
-    return userRepository.existsByEmail(email)
+  fun checkEmailDuplication(email: String): DuplicateCheckResponse {
+    return DuplicateCheckResponse(userRepository.existsByEmail(email))
   }
 
   fun validateUser(userId: String, password: String): AuthResponseDTO {
