@@ -7,6 +7,6 @@ import vottega.user_service.dto.UserAuthRequestDTO
 
 @FeignClient(name = "auth-service")
 interface AuthClient {
-  @PostMapping("api/auth")
+  @PostMapping("api/auth/user")
   fun getRoom(userAuthRequestDTO: UserAuthRequestDTO): AuthResponseDTO
 }
