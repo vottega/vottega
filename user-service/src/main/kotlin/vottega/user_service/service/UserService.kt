@@ -74,4 +74,11 @@ class UserService(
   fun deleteUser(userId: String) {
     userRepository.deleteByUserId(userId)
   }
+
+  fun getList(): List<UserResponse> {
+    val userList = userRepository.findAll()
+    return userList.map {
+      userMapper.toUserDTO(it)
+    }
+  }
 }
