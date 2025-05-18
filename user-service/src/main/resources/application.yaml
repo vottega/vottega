@@ -24,6 +24,19 @@ spring:
     redis:
       host: localhost
       port: 6381
+  security:
+    oauth2:
+      client:
+        registration:
+          service-b:
+            provider: auth-service
+            client-id: ${USER_SERVICE_CLIENT_ID:user-service}
+            client-secret: ${USER_SERVICE_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope: auth_service.read
+        provider:
+          auth-service:
+            token-uri: lb://auth-service/oauth2/token
 springdoc:
   swagger-ui:
     path: /api
@@ -31,7 +44,7 @@ springdoc:
 server:
   port: 8087
 
-  eureka:
-    client:
-      service-url:
-        defaultZone: http://localhost:8761/eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
