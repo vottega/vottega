@@ -68,7 +68,7 @@ class UserServiceTest {
       newUserRequest.password,
       newUserRequest.emailAuthCode
     )
-    assertThat(userService.validateUser(newUserRequest.userId, newUserRequest.password)).isTrue
+    assertThat(userService.validateUser(newUserRequest.userId, newUserRequest.password).verified).isTrue()
   }
 
   @Test
@@ -139,14 +139,14 @@ class UserServiceTest {
 
   @Test
   fun checkUserIdDuplication() {
-    assertThat(userService.checkUserIdDuplication("새아이디")).isFalse
-    assertThat(userService.checkUserIdDuplication(existUser.userId)).isTrue
+    assertThat(userService.checkUserIdDuplication("새아이디").isDuplicate).isFalse
+    assertThat(userService.checkUserIdDuplication(existUser.userId).isDuplicate).isTrue
   }
 
   @Test
   fun checkEmailDuplication() {
-    assertThat(userService.checkEmailDuplication("새이메일")).isFalse
-    assertThat(userService.checkEmailDuplication(existUser.email)).isTrue
+    assertThat(userService.checkEmailDuplication("새이메일").isDuplicate).isFalse
+    assertThat(userService.checkEmailDuplication(existUser.email).isDuplicate).isTrue
   }
 
 
@@ -202,7 +202,7 @@ class UserServiceTest {
 
     val editPassword = "변경비밀번호"
     val updatedUser = userService.updateUser(newUser.userId, null, editPassword)
-    assertThat(userService.validateUser(newUser.userId, editPassword)).isTrue
+    assertThat(userService.validateUser(newUser.userId, editPassword).verified).isTrue
   }
 
   @Test
