@@ -8,7 +8,6 @@ import vottega.user_service.client.AuthClient
 import vottega.user_service.domain.User
 import vottega.user_service.dto.AuthResponseDTO
 import vottega.user_service.dto.DuplicateCheckResponse
-import vottega.user_service.dto.UserAuthRequestDTO
 import vottega.user_service.dto.UserResponse
 import vottega.user_service.dto.mapper.UserMapper
 import vottega.user_service.repository.UserRepository
@@ -53,9 +52,9 @@ class UserService(
   fun validateUser(userId: String, password: String): AuthResponseDTO {
     val user = userRepository.findByUserId(userId)
     if (user != null && passwordEncoder.matches(password, user.password)) {
-      return authClient.getRoom(UserAuthRequestDTO(id = user.id!!, userId = userId))
+      return AuthResponseDTO(verified = true)
     }
-    throw BadCredentialsException("Invalid userId or password")
+    return AuthResponseDTO(verified = false)
   }
 
   //security 추가

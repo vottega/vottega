@@ -40,6 +40,6 @@ class UserController(private val userService: UserService, private val emailAuth
 
 
   @PostMapping("/login")
-  fun login(@RequestBody loginRequest: LoginRequest) =
+  fun login(@RequestBody loginRequest: LoginRequest): AuthResponseDTO =
     userService.validateUser(loginRequest.userId, loginRequest.password)
 }

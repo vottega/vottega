@@ -45,7 +45,6 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
   implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-  implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.kafka:spring-kafka")
   compileOnly("org.projectlombok:lombok")
