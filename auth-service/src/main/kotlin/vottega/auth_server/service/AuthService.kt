@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import vottega.auth_server.client.RoomClient
+import vottega.auth_server.client.UserClient
 import vottega.auth_server.dto.*
 import vottega.auth_server.jwt.JwtUtil
 import java.util.*
@@ -12,6 +13,7 @@ import java.util.*
 class AuthService(
   private val jwtUtil: JwtUtil,
   private val roomClient: RoomClient,
+  private val userClient: UserClient
 ) {
   fun authenticateParticipantId(userId: UUID): Mono<ParticipantAuthResponseDTO> {
     return roomClient.getUserById(userId)
@@ -28,16 +30,23 @@ class AuthService(
       }
   }
 
-  fun createUserToken(id: Long, userId: String): Mono<AuthResponseDTO> {
-    return jwtUtil.generateUserIdToken(id, userId)
-      .publishOn(Schedulers.parallel())
-      .map { token ->
-        AuthResponseDTO(
-          token = token,
-        )
+  fun authenticateUserId(userId: String, password: String): Mono<AuthResponseDTO> {
+    return userClient.authenticateUser(userId, password)
+      .subscribeOn(Schedulers.boundedElastic())
+      .flatMap { userResponse ->
+        if (userResponse.verified) {
+          jwtUtil.generateUserIdToken(userResponse.id!!, userId)
+            .publishOn(Schedulers.parallel())
+            .map { token ->
+              AuthResponseDTO(
+                token = token,
+              )
+            }
+        } else {
+          Mono.error(IllegalArgumentException("Invalid credentials"))
+        }
       }
   }
-
 
   fun verify(token: String): Mono<VerifyResponseDTO> {
     return Mono.fromCallable {
