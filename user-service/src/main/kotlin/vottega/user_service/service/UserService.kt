@@ -52,7 +52,7 @@ class UserService(
   fun validateUser(userId: String, password: String): AuthResponseDTO {
     val user = userRepository.findByUserId(userId)
     if (user != null && passwordEncoder.matches(password, user.password)) {
-      return AuthResponseDTO(verified = true)
+      return AuthResponseDTO(verified = true, id = user.id!!)
     }
     return AuthResponseDTO(verified = false)
   }
