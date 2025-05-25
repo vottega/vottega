@@ -17,7 +17,7 @@ import java.util.*
 @Component
 class JwtUtil {
 
-  private val EXPIRE_TIME = 1000 * 60 * 60 // 1시간
+  private val EXPIRE_TIME = 1000 * 60 * 60 * 24
   private val keyPair: KeyPair = generateKeyPair()
 
   // RSA 키 생성
