@@ -42,4 +42,10 @@ class UserController(private val userService: UserService, private val emailAuth
   @PostMapping("/login")
   fun login(@RequestBody loginRequest: LoginRequest): AuthResponseDTO =
     userService.validateUser(loginRequest.userId, loginRequest.password)
+
+  //임시로 userId를 path parameter로 나중에는 security로 변경
+  @DeleteMapping("/{userId}")
+  fun deleteUser(@PathVariable userId: String) {
+    userService.deleteUser(userId)
+  }
 }
