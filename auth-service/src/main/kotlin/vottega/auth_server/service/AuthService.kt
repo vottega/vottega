@@ -56,6 +56,7 @@ class AuthService(
             role = Role.PARTICIPANT,
             participantId = UUID.fromString(decodedToken.uuid),
             roomId = decodedToken.roomId,
+            id = null,
             userId = null
           )
         }
@@ -65,7 +66,8 @@ class AuthService(
             role = Role.USER,
             participantId = null,
             roomId = null,
-            userId = decodedToken.userId.toLongOrNull()
+            id = decodedToken.id,
+            userId = decodedToken.userId
           )
         }
       }
