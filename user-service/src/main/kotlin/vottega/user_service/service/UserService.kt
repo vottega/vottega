@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import vottega.user_service.client.AuthClient
 import vottega.user_service.domain.User
 import vottega.user_service.dto.AuthResponseDTO
 import vottega.user_service.dto.DuplicateCheckResponse
@@ -19,7 +18,6 @@ class UserService(
   private val userRepository: UserRepository,
   private val passwordEncoder: PasswordEncoder,
   private val userMapper: UserMapper,
-  private val authClient: AuthClient
 ) {
   fun createUser(
     name: String,
