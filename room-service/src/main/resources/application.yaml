@@ -1,6 +1,8 @@
 spring:
   application:
     name: room-service
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   security:
     user:
       name: minguni
@@ -29,13 +31,13 @@ spring:
 springdoc:
   swagger-ui:
     path: /api
-auth:
-  service:
-    url: http://localhost:8083
 
 server:
   port: 8080
+  shutdown: graceful
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+    should-unregister-on-shutdown: true
+
