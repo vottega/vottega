@@ -1,6 +1,8 @@
 package vottega.room_service.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 import org.springframework.dao.DuplicateKeyException
 import vottega.room_service.domain.enumeration.RoomStatus
 import vottega.room_service.dto.ParticipantInfoDTO
@@ -12,6 +14,8 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
+@SQLDelete(sql = "UPDATE room SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at is NULL")
 class Room(
   roomName: String,
   ownerId: Long,
@@ -40,6 +44,9 @@ class Room(
   var startedAt: LocalDateTime? = null
     private set
   var finishedAt: LocalDateTime? = null
+    private set
+
+  var deletedAt: LocalDateTime? = null
     private set
 
   fun addParticipant(participantInfoDTO: ParticipantInfoDTO): Participant {

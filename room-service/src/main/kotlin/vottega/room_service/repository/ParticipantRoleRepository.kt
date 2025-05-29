@@ -2,10 +2,11 @@ package vottega.room_service.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
-import vottega.room_service.domain.Participant
-import java.util.*
+import org.springframework.stereotype.Repository
+import vottega.room_service.domain.ParticipantRole
 
-interface ParticipantRepository : JpaRepository<Participant, UUID> {
+@Repository
+interface ParticipantRoleRepository : JpaRepository<ParticipantRole, Long> {
   @Modifying
   fun deleteByRoomId(roomId: Long)
 }

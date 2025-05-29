@@ -16,6 +16,7 @@ import vottega.room_service.dto.mapper.RoomMapper
 import vottega.room_service.exception.ParticipantNotFoundException
 import vottega.room_service.exception.RoomNotFoundException
 import vottega.room_service.repository.ParticipantRepository
+import vottega.room_service.repository.ParticipantRoleRepository
 import vottega.room_service.repository.RoomRepository
 import java.util.*
 
@@ -24,6 +25,7 @@ import java.util.*
 class RoomService(
   private val roomRepository: RoomRepository,
   private val participantRepository: ParticipantRepository,
+  private val participantRoleRepository: ParticipantRoleRepository,
   private val roomMapper: RoomMapper,
   private val roomProducer: RoomProducer,
   private val participantMapper: ParticipantMapper
@@ -40,6 +42,14 @@ class RoomService(
     participantRoleDTOList.forEach { room.addParticipantRole(it.role, it.canVote) }
 
     return roomMapper.toRoomOutDTO(room)
+  }
+
+  @PreAuthorize("hasRole('USER')&& @roomSecurity.isOwner(#roomId, authentication.principal)")
+  fun deleteRoom(roomId: Long) {
+    val room = roomRepository.findById(roomId).orElseThrow { RoomNotFoundException(roomId) }
+    participantRoleRepository.deleteByRoomId(roomId)
+    participantRepository.deleteByRoomId(roomId)
+    roomRepository.delete(room)
   }
 
 
