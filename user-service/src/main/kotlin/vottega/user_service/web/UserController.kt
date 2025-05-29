@@ -45,7 +45,7 @@ class UserController(private val userService: UserService, private val emailAuth
 
   //임시로 userId를 path parameter로 나중에는 security로 변경
   @DeleteMapping("/{userId}")
-  fun deleteUser(@PathVariable userId: String) {
+  fun deleteUser(@PathVariable userId: Long) {
     userService.deleteUser(userId)
   }
 }

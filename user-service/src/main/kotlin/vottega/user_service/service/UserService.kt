@@ -74,8 +74,8 @@ class UserService(
   }
 
   //security 추가
-  fun deleteUser(userId: String) {
-    userRepository.deleteByUserId(userId)
+  fun deleteUser(userId: Long) {
+    userRepository.deleteById(userId)
   }
 
   fun getList(): List<UserResponse> {
