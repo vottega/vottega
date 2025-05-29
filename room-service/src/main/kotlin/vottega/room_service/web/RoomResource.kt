@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import vottega.room_service.argument.UserId
 import vottega.room_service.dto.CreateRoomRequestDTO
 import vottega.room_service.dto.ParticipantRoleDTO
 import vottega.room_service.dto.RoomResponseDTO
@@ -47,9 +48,14 @@ class RoomResource(
   fun deleteRole(@PathVariable roomId: Long, @PathVariable role: String): RoomResponseDTO =
     roomService.deleteRole(roomId, role)
 
-  @GetMapping("/list/{userId}")
+  @GetMapping("/list")
   @Operation(summary = "방 목록 조회", description = "사용자의 방 목록을 조회합니다.")
-  fun getRoomList(@PathVariable userId: Long): List<RoomResponseDTO> = roomService.getRoomList(userId)
+  fun getRoomList(@UserId userId: Long): List<RoomResponseDTO> = roomService.getRoomList(userId)
+
+  @DeleteMapping("/{roomId}")
+  @Operation(summary = "방 삭제", description = "방을 삭제합니다.")
+  fun deleteRoom(@PathVariable roomId: Long) =
+    roomService.deleteRoom(roomId)
 
 
 }
