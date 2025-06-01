@@ -12,6 +12,26 @@ services:
       MYSQL_PASSWORD: minguni
     volumes:
       - room-db-data:/var/lib/mysql # 데이터를 로컬에 영구 저장
+  room-service-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: room-service:latest
+    container_name: room-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://host.docker.internal:8761/eureka
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=host.docker.internal:9092
+      - SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://host.docker.internal:8081
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://host.docker.internal:3306/room-db
+      - JAVA_OPTS=-Xms512m -Xmx1g
+      - EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - room-db
 
 volumes:
   room-db-data:
