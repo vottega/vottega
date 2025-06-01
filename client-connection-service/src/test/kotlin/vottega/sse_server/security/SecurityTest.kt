@@ -40,7 +40,7 @@ class SseSecurityIntegrationTest {
   @BeforeEach
   fun setUp() {
     val dummy = RoomEvent(type = RoomEventType.ROOM_INFO, data = "roomInfo")
-    given(sseService.enterRoom(any(), any()))
+    given(sseService.enterParticipant(any(), any()))
       .willReturn(Flux.just(dummy))
   }
 
