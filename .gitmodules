@@ -16,3 +16,6 @@
 [submodule "gateway"]
 	path = gateway
 	url = https://github.com/vottega/gateway.git
+[submodule "discovery-service"]
+	path = discovery-service
+	url = https://github.com/vottega/discovery-service.git
