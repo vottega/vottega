@@ -1,0 +1,16 @@
+services:
+  gateway-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gateway:latest
+    container_name: gateway
+    ports:
+      - "9000:9000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://host.docker.internal:8761/eureka
+      - JAVA_OPTS=-Xms512m -Xmx1g
+      - EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal
+    volumes:
+      - ./logs:/app/logs
