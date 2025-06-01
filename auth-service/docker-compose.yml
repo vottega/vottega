@@ -1,0 +1,16 @@
+services:
+  auth-service-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: auth-service:latest
+    container_name: auth-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://host.docker.internal:8761/eureka
+      - JAVA_OPTS=-Xms512m -Xmx1g
+      - EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal
+    volumes:
+      - ./logs:/app/logs
