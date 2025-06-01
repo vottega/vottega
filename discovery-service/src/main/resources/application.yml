@@ -5,13 +5,17 @@ server:
 spring:
   application:
     name: eureka-server
+  docker:
+    compose:
+      enabled: false
 
 
 eureka:
   client:
-    register-with-eureka: false # don't need to register itself
-    fetch-registry: false # don't need to fetch registry
-
+    register-with-eureka: false
+    fetch-registry: false
+  instance:
+    prefer-ip-address: true
 
 
 
