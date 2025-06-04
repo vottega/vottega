@@ -21,8 +21,10 @@ data class VerifyResponseDTO(
   val role: Role,
   val participantId: UUID?,
   val roomId: Long?,
-  val userId: Long?
+  val id: Long?,
+  val userId: String?
 )
+
 
 data class VerifyRequest(
   val token: String

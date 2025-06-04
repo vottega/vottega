@@ -40,7 +40,7 @@ class TokenCheckGatewayFilterFactory(
           .apply {
             header("X-Client-Role", result.role.name)
             when (result.role) {
-              Role.USER -> header("X-User-Id", result.userId.toString())
+              Role.USER -> header("X-User-Id", result.id.toString())
               else       -> header("X-Participant-Id", result.participantId.toString())
             }
             result.roomId?.let { header("X-Room-Id", it.toString()) }
