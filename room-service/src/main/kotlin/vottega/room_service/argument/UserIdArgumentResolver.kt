@@ -32,7 +32,7 @@ class UserIdArgumentResolver : HandlerMethodArgumentResolver {
       return authentication.principal as Long
     } else {
       throw BadCredentialsException(
-        "Participant 권한이 없습니다."
+        "User 권한이 없습니다."
       )
     }
   }

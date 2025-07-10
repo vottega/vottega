@@ -25,7 +25,6 @@ class RoomKafkaProducerConfig(
 
   @Bean
   fun makeRoomTopic(): NewTopic {
-    println("new topic")
     return NewTopic("room", 1, 1)
   }
 }
