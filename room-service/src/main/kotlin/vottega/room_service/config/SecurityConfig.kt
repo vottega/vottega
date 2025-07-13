@@ -21,6 +21,7 @@ class SecurityConfig {
       .formLogin { it.disable() }
       .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) } // 세션 관리 비활성화
       .authorizeHttpRequests {
+        it.requestMatchers("/api/room/participants/**").permitAll()
         it.requestMatchers(
           "/api/room/**",
         ).authenticated()
