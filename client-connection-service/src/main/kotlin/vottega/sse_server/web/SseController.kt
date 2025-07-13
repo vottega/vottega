@@ -4,7 +4,6 @@ import ParticipantId
 import RoomId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -37,19 +36,6 @@ class SseController(private val sseService: SseService) {
   fun connectToRoom(@PathVariable roomId: Long, @UserId userId: Long): Flux<RoomEvent> { //TODO UUID는 security로 받기
     return sseService.enterOwner(roomId, userId).doOnCancel {
       sseService.exitRoom(roomId, userId).subscribeOn(Schedulers.boundedElastic()).subscribe()
-    }
-  }
-
-
-  @GetMapping("/api/sse/room/{roomId}/{participantId}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-  @Operation(summary = "SSE 연결", description = "SSE 연결을 위한 API")
-  @Profile("local")
-  fun connectToRoomLocal(
-    @PathVariable roomId: Long,
-    @PathVariable participantId: UUID
-  ): Flux<RoomEvent> { //TODO UUID는 security로 받기
-    return sseService.enterParticipant(roomId, participantId).doOnCancel {
-      sseService.exitRoom(roomId, participantId).subscribeOn(Schedulers.boundedElastic()).subscribe()
     }
   }
 }
