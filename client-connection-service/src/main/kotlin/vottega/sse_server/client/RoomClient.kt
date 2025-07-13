@@ -2,20 +2,24 @@ package vottega.sse_server.client
 
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Component
 class RoomClient(private val webClientBuilder: WebClient.Builder) {
-  fun getUserRoomList(): Flux<RoomResponseDTO> =
+  fun getUserRoomList(): Mono<RoomListResponseDTO> =
     webClientBuilder.build()
       .get()
       .uri("/api/room/list")
       .retrieve()
-      .bodyToFlux(RoomResponseDTO::class.java)
+      .bodyToMono(RoomListResponseDTO::class.java)
 }
 
 data class RoomResponseDTO(
   val id: Long,
   val name: String,
   val ownerId: Long,
+)
+
+data class RoomListResponseDTO(
+  val roomList: List<RoomResponseDTO>,
 )

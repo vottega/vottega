@@ -2,9 +2,9 @@ package vottega.sse_server.cache
 
 import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import vottega.sse_server.client.RoomClient
-import vottega.sse_server.client.RoomResponseDTO
 
 @Service
 class UserRoomCacheService(
@@ -25,7 +25,10 @@ class UserRoomCacheService(
     return reactiveRedisTemplate.delete(userId)
       .thenMany(
         roomClient.getUserRoomList()
-          .map(RoomResponseDTO::id)
+          .flatMapMany { response ->
+            Flux.fromIterable(response.roomList)
+          }
+          .map { it.id }
       )
       .flatMap { id ->
         setOps.add(userId, id)
