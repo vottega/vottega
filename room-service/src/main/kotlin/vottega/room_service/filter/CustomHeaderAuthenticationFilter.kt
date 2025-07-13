@@ -55,5 +55,5 @@ class CustomHeaderAuthenticationFilter : OncePerRequestFilter() {
   }
 
   override fun shouldNotFilter(request: HttpServletRequest) =
-    !request.servletPath.startsWith("/api/room/") || request.servletPath.startsWith("/api/room/participants")
+    !request.servletPath.startsWith("/api/room") || request.servletPath.startsWith("/api/room/participants")
 }
