@@ -5,11 +5,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 
 @Component
-class RoomClient(private val webclient: WebClient) {
-  fun getUserRoomList(userId: Long): Flux<RoomResponseDTO> =
-    webclient
-      .post()
-      .uri("/api/room/list/{userId}")
+class RoomClient(private val webClientBuilder: WebClient.Builder) {
+  fun getUserRoomList(): Flux<RoomResponseDTO> =
+    webClientBuilder.build()
+      .get()
+      .uri("/api/room/list")
       .retrieve()
       .bodyToFlux(RoomResponseDTO::class.java)
 }
@@ -17,8 +17,5 @@ class RoomClient(private val webclient: WebClient) {
 data class RoomResponseDTO(
   val id: Long,
   val name: String,
-  val description: String,
   val ownerId: Long,
-  val createdAt: String,
-  val updatedAt: String
 )

@@ -13,8 +13,8 @@ import reactor.core.publisher.Mono
 class WebClientConfig {
   @Bean
   @LoadBalanced
-  fun webclient(): WebClient {
-    return WebClient.builder()
+  fun webclient(): WebClient.Builder =
+    WebClient.builder()
       .baseUrl("lb://ROOM-SERVICE")
       .defaultHeader("Content-Type", "application/json")
       .filter(ExchangeFilterFunction.ofRequestProcessor { req ->
@@ -26,6 +26,5 @@ class WebClientConfig {
           Mono.just(newReq)
         }
       })
-      .build()
-  }
+
 }

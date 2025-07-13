@@ -24,7 +24,7 @@ class UserRoomCacheService(
   private fun refreshCacheAndCheck(userId: Long, roomId: Long): Mono<Boolean> {
     return reactiveRedisTemplate.delete(userId)
       .thenMany(
-        roomClient.getUserRoomList(userId)
+        roomClient.getUserRoomList()
           .map(RoomResponseDTO::id)
       )
       .flatMap { id ->
