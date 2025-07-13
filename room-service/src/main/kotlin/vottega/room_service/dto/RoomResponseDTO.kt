@@ -15,3 +15,7 @@ data class RoomResponseDTO(
   val startedAt: LocalDateTime?,
   val finishedAt: LocalDateTime?,
 )
+
+data class RoomListResponseDTO(
+  val roomList: List<RoomResponseDTO>,
+)

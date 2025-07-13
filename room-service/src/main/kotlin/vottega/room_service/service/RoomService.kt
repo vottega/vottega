@@ -7,10 +7,7 @@ import vottega.avro.Action
 import vottega.room_service.adaptor.RoomProducer
 import vottega.room_service.domain.Room
 import vottega.room_service.domain.enumeration.RoomStatus
-import vottega.room_service.dto.ParticipantInfoDTO
-import vottega.room_service.dto.ParticipantRoleDTO
-import vottega.room_service.dto.ParticipantRoomDTO
-import vottega.room_service.dto.RoomResponseDTO
+import vottega.room_service.dto.*
 import vottega.room_service.dto.mapper.ParticipantMapper
 import vottega.room_service.dto.mapper.RoomMapper
 import vottega.room_service.exception.ParticipantNotFoundException
@@ -143,8 +140,8 @@ class RoomService(
 
 
   @PreAuthorize("hasRole('USER')")
-  fun getRoomList(userId: Long): List<RoomResponseDTO> {
-    return roomRepository.findByUserId(userId).map { roomMapper.toRoomOutDTO(it) }
+  fun getRoomList(userId: Long): RoomListResponseDTO {
+    return RoomListResponseDTO(roomRepository.findByUserId(userId).map { roomMapper.toRoomOutDTO(it) })
   }
 
   fun getParticipantRoom(participantId: UUID): ParticipantRoomDTO {
