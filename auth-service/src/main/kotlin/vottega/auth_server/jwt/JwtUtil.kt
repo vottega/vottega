@@ -78,7 +78,7 @@ class JwtUtil {
       }
 
       // Extract role and return data based on the role
-      return when (claims["role"] as? String) {
+      return when (claims["role"]) {
 
         "participant" -> JwtResponseDto.JwtParticipantResponseDto(
           uuid = claims.subject ?: throw BadCredentialsException("Missing UUID"),
@@ -114,5 +114,5 @@ class BadCredentialsException : RuntimeException {
   constructor(message: String, cause: Throwable) : super(message, cause)
 }
 
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
+@ResponseStatus(HttpStatus.GONE)
 class CredentialsExpiredException(msg: String) : RuntimeException(msg)
