@@ -1,21 +1,28 @@
 [submodule "auth-service"]
 	path = auth-service
 	url = https://github.com/vottega/auth-service.git
+	branch = main
 [submodule "room-service"]
 	path = room-service
 	url = https://github.com/vottega/room-service.git
+	branch = main
 [submodule "user-service"]
 	path = user-service
 	url = https://github.com/vottega/user-service.git
+	branch = main
 [submodule "vote-service"]
 	path = vote-service
 	url = https://github.com/vottega/vote-service.git
+	branch = main
 [submodule "client-connection-service"]
 	path = client-connection-service
 	url = https://github.com/vottega/client-connection-service.git
+	branch = main
 [submodule "gateway"]
 	path = gateway
 	url = https://github.com/vottega/gateway.git
+	branch = main
 [submodule "discovery-service"]
 	path = discovery-service
 	url = https://github.com/vottega/discovery-service.git
+	branch = main
