@@ -56,7 +56,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("vottega:security-starter:1.1.1")
+  implementation("vottega:security-starter:1.1.2")
 
   compileOnly("org.projectlombok:lombok")
   runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
