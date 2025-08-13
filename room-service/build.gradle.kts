@@ -34,8 +34,17 @@ dependencyManagement {
 
 
 repositories {
-  mavenCentral() // 기본 저장소
-  maven("https://packages.confluent.io/maven/") // Confluent 저장소
+  maven {
+    url = uri("https://maven.pkg.github.com/vottega/security")
+    credentials {
+      username = findProperty("gpr.user") as String?
+        ?: System.getenv("GITHUB_ACTOR")
+      password = findProperty("gpr.key") as String?
+        ?: System.getenv("GITHUB_TOKEN")
+    }
+  }
+  mavenCentral()
+  maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {
@@ -44,9 +53,10 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.kafka:spring-kafka")
-  implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("vottega:security-starter:1.1.1")
 
   compileOnly("org.projectlombok:lombok")
   runtimeOnly("org.mariadb.jdbc:mariadb-java-client")

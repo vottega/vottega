@@ -44,3 +44,9 @@ eureka:
     prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:true}
     ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
 
+#security 설정
+vottega:
+  security:
+    filter-paths: [ "/api/room/**", "/api/room" ]
+    permit-paths: [ "/api/room/participants/**" ]
+

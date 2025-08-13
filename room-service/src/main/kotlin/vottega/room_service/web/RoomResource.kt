@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import vottega.room_service.argument.UserId
 import vottega.room_service.dto.*
 import vottega.room_service.service.RoomService
+import vottega.security.security.UserId
 
 @RestController
 @RequestMapping("/api/room")
