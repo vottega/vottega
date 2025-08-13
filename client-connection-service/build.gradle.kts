@@ -50,7 +50,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
-  implementation("vottega:security-starter:1.1.1")
+  implementation("vottega:security-starter:1.1.2")
 
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
