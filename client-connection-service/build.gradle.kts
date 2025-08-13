@@ -26,6 +26,15 @@ dependencyManagement {
 }
 
 repositories {
+  maven {
+    url = uri("https://maven.pkg.github.com/vottega/security")
+    credentials {
+      username = findProperty("gpr.user") as String?
+        ?: System.getenv("GITHUB_ACTOR")
+      password = findProperty("gpr.key") as String?
+        ?: System.getenv("GITHUB_TOKEN")
+    }
+  }
   mavenCentral()
   maven("https://packages.confluent.io/maven/")
 }
@@ -41,6 +50,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+  implementation("vottega:security-starter:1.1.1")
 
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

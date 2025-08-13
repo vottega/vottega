@@ -1,7 +1,5 @@
 package vottega.sse_server.web
 
-import ParticipantId
-import RoomId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
@@ -10,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
-import vottega.sse_server.argumet_resolver.UserId
+import vottega.security.security.ParticipantId
+import vottega.security.security.RoomId
+import vottega.security.security.UserId
 import vottega.sse_server.dto.RoomEvent
 import vottega.sse_server.service.SseService
 import java.util.*
@@ -25,7 +25,7 @@ class SseController(private val sseService: SseService) {
   fun connectToRoom(
     @RoomId roomId: Long,
     @ParticipantId participantId: UUID
-  ): Flux<RoomEvent> { //TODO UUID는 security로 받기
+  ): Flux<RoomEvent> {
     return sseService.enterParticipant(roomId, participantId).doOnCancel {
       sseService.exitRoom(roomId, participantId).subscribeOn(Schedulers.boundedElastic()).subscribe()
     }
