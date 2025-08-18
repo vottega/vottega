@@ -5,7 +5,8 @@
 ## 서비스 구성
 
 
-<img width="700" height="390" alt="image" src="https://github.com/user-attachments/assets/ac293a53-bc72-428d-87c5-c57b28685341" />
+<img width="6944" height="3936" alt="image" src="https://github.com/user-attachments/assets/1f65bc71-ac62-45c1-a7bb-62324ff45a9f" />
+
 
 - **gateway** — 외부 트래픽의 진입점(API Gateway). 라우팅·인증 연계·서비스 보호 계층을 담당.  
 - **discovery-service** — 서비스 레지스트리(Eureka Server). 각 서비스 인스턴스 등록/조회.  
