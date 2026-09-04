@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: sse-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: sse-server
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    properties:
+      schema.registry.url: http://localhost:8081
+      auto.register.schemas: true
+  data:
+    redis:
+      host: localhost
+      port: 6380
+springdoc:
+  swagger-ui:
+    path: /api
+server:
+  port: 8084
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://localhost:8761/eureka}
+    should-unregister-on-shutdown: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:true}
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
+
+vottega:
+  security:
+    filter-paths: [ "/api/sse/**" ]
