@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - TokenCheck
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/user/**
+        - id: room-service
+          uri: lb://ROOM-SERVICE
+          predicates:
+            - Path=/api/room/**
+        - id: vote-service
+          uri: lb://VOTE-SERVICE
+          predicates:
+            - Path=/api/vote/**
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+        - id: sse-service
+          uri: lb://SSE-SERVICE
+          predicates:
+            - Path=/api/sse/**
+server:
+  port: 9000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://localhost:8761/eureka}
+    should-unregister-on-shutdown: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:true}
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
