@@ -1,0 +1,87 @@
+package vottega.user_service.service
+
+import jakarta.transaction.Transactional
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import vottega.user_service.domain.User
+import vottega.user_service.dto.AuthResponseDTO
+import vottega.user_service.dto.DuplicateCheckResponse
+import vottega.user_service.dto.UserResponse
+import vottega.user_service.dto.mapper.UserMapper
+import vottega.user_service.repository.UserRepository
+
+@Service
+@Transactional
+class UserService(
+  private val emailAuthService: EmailAuthService,
+  private val userRepository: UserRepository,
+  private val passwordEncoder: PasswordEncoder,
+  private val userMapper: UserMapper,
+) {
+  fun createUser(
+    name: String,
+    userId: String,
+    email: String,
+    password: String,
+    emailAuthCode: String
+  ): UserResponse {
+    if (!emailAuthService.verifyEmail(email, emailAuthCode).isDuplicate) {
+      throw BadCredentialsException("Email verification failed")
+    }
+    val user = User(
+      username = name,
+      userId = userId,
+      email = email,
+      password = passwordEncoder.encode(password)
+    ) // 중복이면 알아서 409가 나감
+    userRepository.save(user)
+    return userMapper.toUserDTO(user)
+  }
+
+  fun checkUserIdDuplication(userId: String): DuplicateCheckResponse {
+    return DuplicateCheckResponse(userRepository.existsByUserId(userId))
+  }
+
+  fun checkEmailDuplication(email: String): DuplicateCheckResponse {
+    return DuplicateCheckResponse(userRepository.existsByEmail(email))
+  }
+
+  fun validateUser(userId: String, password: String): AuthResponseDTO {
+    val user = userRepository.findByUserId(userId)
+    if (user != null && passwordEncoder.matches(password, user.password)) {
+      return AuthResponseDTO(verified = true, id = user.id!!)
+    }
+    return AuthResponseDTO(verified = false)
+  }
+
+  //security 추가
+  fun updateUser(userId: String, name: String?, password: String?): UserResponse {
+    if (name != null) {
+      val existUser = userRepository.findByUsername(name)
+      if (existUser != null) {
+        throw IllegalArgumentException("이미 존재하는 이름입니다.")
+      }
+      val user = userRepository.findByUserId(userId)
+      user?.updateName(name)
+    }
+    if (password != null) {
+      val user = userRepository.findByUserId(userId)
+      user?.updatePassword(passwordEncoder.encode(password))
+    }
+    val user = userRepository.findByUserId(userId)
+    return userMapper.toUserDTO(user ?: throw IllegalArgumentException("존재하지 않는 유저입니다."))
+  }
+
+  //security 추가
+  fun deleteUser(userId: Long) {
+    userRepository.deleteById(userId)
+  }
+
+  fun getList(): List<UserResponse> {
+    val userList = userRepository.findAll()
+    return userList.map {
+      userMapper.toUserDTO(it)
+    }
+  }
+}
