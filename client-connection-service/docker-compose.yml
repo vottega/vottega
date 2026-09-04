@@ -9,8 +9,8 @@ services:
 
   sse-service-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: client-connection-service/Dockerfile
     image: sse-service:latest
     container_name: sse-service
     ports:

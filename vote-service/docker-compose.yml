@@ -13,8 +13,8 @@ services:
       - vote-db-data:/var/lib/mysql  # 데이터를 로컬에 영구 저장
   vote-service-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: vote-service/Dockerfile
     image: vote-service:latest
     container_name: vote-service
     ports:

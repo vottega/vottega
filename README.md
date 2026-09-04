@@ -16,6 +16,57 @@
 - **vote-service** — 투표 도메인. 투표 생성/참여/집계 등 투표 로직.  
 - **client-connection-service** — 클라이언트와 백엔드 간 SSE 연결 관리
 
+## 프로젝트 구조
+
+7개 서비스가 하나의 Gradle 멀티모듈 프로젝트로 구성되어 있습니다. (이전에는 git submodule 구조였습니다.)
+
+```
+vottega
+├── settings.gradle.kts        # 모듈 include
+├── build.gradle.kts           # 공통 플러그인 버전 / 공통 설정
+├── gradlew                    # 단일 Gradle wrapper (8.12.1)
+├── discovery-service
+├── gateway
+├── auth-service
+├── user-service
+├── room-service
+├── vote-service
+└── client-connection-service
+```
+
+## 빌드 / 실행
+
+```bash
+# 전체 빌드
+./gradlew build
+
+# 특정 서비스만 빌드
+./gradlew :room-service:bootJar
+
+# 특정 서비스 실행
+./gradlew :room-service:bootRun
+```
+
+`room-service`, `vote-service`, `client-connection-service` 는 GitHub Packages 의
+`vottega:security-starter` 를 사용하므로 `~/.gradle/gradle.properties` 에 아래 값이
+필요합니다. (또는 `GITHUB_ACTOR` / `GITHUB_TOKEN` 환경변수)
+
+```properties
+gpr.user=<github-username>
+gpr.key=<read:packages 권한이 있는 PAT>
+```
+
+### Docker
+
+Dockerfile 은 리포지토리 루트를 빌드 컨텍스트로 사용합니다.
+
+```bash
+docker build -f room-service/Dockerfile -t room-service:latest .
+
+# 또는 각 모듈 디렉터리에서
+cd room-service && docker compose up --build
+```
+
 ## 사용 기술
 
 - **언어**

@@ -13,8 +13,8 @@ services:
       - user-db-data:/var/lib/mysql
   user-service-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: user-service/Dockerfile
     image: user-service:latest
     container_name: user-service
     ports:
