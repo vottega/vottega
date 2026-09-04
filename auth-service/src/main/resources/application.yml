@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: auth-service
+server:
+  port: 8083
+springdoc:
+  swagger-ui:
+    path: /api
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://localhost:8761/eureka}
+    should-unregister-on-shutdown: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:true}
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
